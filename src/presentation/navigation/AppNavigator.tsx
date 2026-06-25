@@ -1,9 +1,11 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { HomeScreen } from "../screens/HomeScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import { WorkoutScreen } from "../screens/WorkoutScreen";
+import { colors } from "../theme/colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -11,11 +13,11 @@ const ironHabitTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: "#0A84FF",
-    background: "#0F0F12",
-    card: "#17171C",
-    border: "#2C2C32",
-    text: "#FFFFFF"
+    primary: colors.primary,
+    background: colors.background,
+    card: colors.surface,
+    border: colors.border,
+    text: colors.text
   }
 };
 
@@ -24,16 +26,31 @@ export function AppNavigator() {
     <NavigationContainer theme={ironHabitTheme}>
       <Tab.Navigator
         id="IronHabitTabs"
-        screenOptions={{
-          headerStyle: { backgroundColor: "#17171C" },
-          headerTintColor: "#FFFFFF",
+        screenOptions={({ route }) => ({
+          headerShown: false,
           tabBarStyle: {
-            backgroundColor: "#17171C",
-            borderTopColor: "#2C2C32"
+            minHeight: 66,
+            paddingTop: 8,
+            paddingBottom: 8,
+            backgroundColor: colors.surface,
+            borderTopColor: colors.border
           },
-          tabBarActiveTintColor: "#0A84FF",
-          tabBarInactiveTintColor: "#8E8E93"
-        }}
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: "700"
+          },
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.muted,
+          tabBarIcon: ({ color, size }) => {
+            const icons = {
+              Home: "home-variant-outline",
+              Allenamento: "dumbbell",
+              Profilo: "account-outline"
+            } as const;
+
+            return <MaterialCommunityIcons name={icons[route.name as keyof typeof icons]} size={size} color={color} />;
+          }
+        })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Allenamento" component={WorkoutScreen} />

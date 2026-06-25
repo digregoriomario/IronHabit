@@ -1,23 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
+import { PlaceholderCard } from "../components/PlaceholderCard";
+import { ScreenLayout } from "../components/ScreenLayout";
 
 export function WorkoutScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Allenamento</Text>
-    </View>
+    <ScreenLayout
+      title="Allenamento"
+      subtitle="Il punto di partenza per creare schede e avviare una sessione."
+    >
+      <PlaceholderCard
+        icon="clipboard-text-outline"
+        title="Le mie schede"
+        description="In questa sezione verranno mostrate le routine salvate dall'utente."
+      />
+    </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#0F0F12"
-  },
-  title: {
-    color: "#FFFFFF",
-    fontSize: 28,
-    fontWeight: "700"
-  }
-});

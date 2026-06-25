@@ -1,23 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
+import { PlaceholderCard } from "../components/PlaceholderCard";
+import { ScreenLayout } from "../components/ScreenLayout";
 
 export function ProfileScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profilo</Text>
-    </View>
+    <ScreenLayout
+      title="Profilo"
+      subtitle="Statistiche personali, obiettivi e progressi saranno raccolti qui."
+    >
+      <PlaceholderCard
+        icon="chart-line"
+        title="I tuoi progressi"
+        description="I grafici e gli indicatori verranno collegati ai workout registrati."
+      />
+    </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#0F0F12"
-  },
-  title: {
-    color: "#FFFFFF",
-    fontSize: 28,
-    fontWeight: "700"
-  }
-});

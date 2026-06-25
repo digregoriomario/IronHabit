@@ -1,23 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
+import { PlaceholderCard } from "../components/PlaceholderCard";
+import { ScreenLayout } from "../components/ScreenLayout";
 
 export function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-    </View>
+    <ScreenLayout
+      title="Home"
+      subtitle="Qui troverai il calendario settimanale e lo storico delle tue attività."
+    >
+      <PlaceholderCard
+        icon="calendar-blank-outline"
+        title="Planner settimanale"
+        description="La pianificazione delle sessioni verrà aggiunta nei prossimi aggiornamenti."
+      />
+    </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#0F0F12"
-  },
-  title: {
-    color: "#FFFFFF",
-    fontSize: 28,
-    fontWeight: "700"
-  }
-});
