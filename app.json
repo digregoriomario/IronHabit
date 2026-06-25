@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "IronHabit",
+    "slug": "ironhabit",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "ironhabit",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0F0F12"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
