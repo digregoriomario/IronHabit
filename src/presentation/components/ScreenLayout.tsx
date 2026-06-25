@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors } from "../theme/colors";
 
@@ -11,19 +12,21 @@ interface ScreenLayoutProps {
 
 export function ScreenLayout({ title, subtitle, children }: ScreenLayoutProps) {
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <Text style={styles.eyebrow}>IRONHABIT</Text>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
-      </View>
+    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.eyebrow}>IRONHABIT</Text>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
+        </View>
 
-      {children}
-    </ScrollView>
+        {children}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -31,6 +34,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.background
+  },
+  scrollView: {
+    flex: 1
   },
   content: {
     padding: 20,
