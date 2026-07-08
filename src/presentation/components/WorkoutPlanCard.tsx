@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors } from "../theme/colors";
 
@@ -8,11 +8,20 @@ interface WorkoutPlanCardProps {
   description: string;
   exercises: number;
   duration: string;
+  active?: boolean;
+  onStart: () => void;
 }
 
-export function WorkoutPlanCard({ title, description, exercises, duration }: WorkoutPlanCardProps) {
+export function WorkoutPlanCard({
+  title,
+  description,
+  exercises,
+  duration,
+  active = false,
+  onStart
+}: WorkoutPlanCardProps) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, active && styles.activeCard]}>
       <View style={styles.heading}>
         <View style={styles.icon}>
           <MaterialCommunityIcons name="dumbbell" size={22} color={colors.primary} />
@@ -26,6 +35,27 @@ export function WorkoutPlanCard({ title, description, exercises, duration }: Wor
       </View>
 
       <Text style={styles.description}>{description}</Text>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={active ? `Sessione ${title} già attiva` : `Avvia sessione ${title}`}
+        disabled={active}
+        onPress={onStart}
+        style={({ pressed }) => [
+          styles.startButton,
+          active && styles.activeButton,
+          pressed && !active && styles.pressedButton
+        ]}
+      >
+        <MaterialCommunityIcons
+          name={active ? "check-circle-outline" : "play-circle-outline"}
+          size={18}
+          color={active ? "#07130B" : colors.text}
+        />
+        <Text style={[styles.startButtonText, active && styles.activeButtonText]}>
+          {active ? "Sessione attiva" : "Avvia sessione"}
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -37,6 +67,9 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 18,
     backgroundColor: colors.card
+  },
+  activeCard: {
+    borderColor: colors.success
   },
   heading: {
     flexDirection: "row",
@@ -70,5 +103,29 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 14,
     lineHeight: 20
+  },
+  startButton: {
+    marginTop: 16,
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 14,
+    backgroundColor: colors.primary
+  },
+  activeButton: {
+    backgroundColor: colors.success
+  },
+  pressedButton: {
+    opacity: 0.78
+  },
+  startButtonText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: "800"
+  },
+  activeButtonText: {
+    color: "#07130B"
   }
 });
