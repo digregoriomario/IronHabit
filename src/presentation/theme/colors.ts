@@ -1,10 +1,20 @@
 export const colors = {
   background: "#0F0F12",
   surface: "#17171C",
+  surfaceRaised: "#1C1C22",
   card: "#202027",
+  cardMuted: "#26262E",
   border: "#2C2C32",
+  borderStrong: "#3A3A44",
   text: "#FFFFFF",
   muted: "#A1A1AA",
+  subtle: "#71717A",
   primary: "#0A84FF",
-  success: "#30D158"
+  primarySoft: "#102A44",
+  success: "#30D158",
+  successSoft: "#13321F",
+  warning: "#FFD60A",
+  warningSoft: "#332B0C",
+  danger: "#FF453A",
+  dangerSoft: "#341818"
 };
