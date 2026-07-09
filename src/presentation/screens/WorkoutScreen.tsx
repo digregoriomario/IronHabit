@@ -17,6 +17,15 @@ export function WorkoutScreen() {
     <ScreenLayout
       title="Allenamento"
       subtitle="Il punto di partenza per creare schede e avviare una sessione."
+      footer={activePlan ? (
+        <View style={styles.footerSession}>
+          <View style={styles.footerCopy}>
+            <Text style={styles.footerEyebrow}>In esecuzione</Text>
+            <Text style={styles.footerTitle}>{activePlan.title}</Text>
+          </View>
+          <Text style={styles.footerAction} onPress={() => setActivePlanId(null)}>Termina</Text>
+        </View>
+      ) : null}
     >
       {activePlan ? (
         <View style={styles.activeSession}>
@@ -48,6 +57,8 @@ export function WorkoutScreen() {
             description={plan.description}
             exercises={plan.exercises}
             duration={plan.duration}
+            rest={plan.rest}
+            exercisePreview={plan.exercisePreview}
             active={activePlanId === plan.id}
             onStart={() => setActivePlanId(plan.id)}
           />
@@ -113,5 +124,30 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 14
+  },
+  footerSession: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14
+  },
+  footerCopy: {
+    flex: 1
+  },
+  footerEyebrow: {
+    color: colors.success,
+    fontSize: 11,
+    fontWeight: "900",
+    letterSpacing: 1
+  },
+  footerTitle: {
+    marginTop: 3,
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: "900"
+  },
+  footerAction: {
+    color: colors.danger,
+    fontSize: 14,
+    fontWeight: "900"
   }
 });
