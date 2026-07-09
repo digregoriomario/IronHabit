@@ -3,15 +3,29 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { workoutPlans } from "../../domain/mockData";
 import { ScreenLayout } from "../components/ScreenLayout";
+import { WorkoutSetRow } from "../components/WorkoutSetRow";
 import { WorkoutPlanCard } from "../components/WorkoutPlanCard";
 import { colors } from "../theme/colors";
 
 export function WorkoutScreen() {
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
+  const [completedSetIds, setCompletedSetIds] = useState<string[]>([]);
   const activePlan = useMemo(
     () => workoutPlans.find((plan) => plan.id === activePlanId) ?? null,
     [activePlanId]
   );
+  const completedSets = completedSetIds.length;
+
+  const startPlan = (planId: string) => {
+    setActivePlanId(planId);
+    setCompletedSetIds([]);
+  };
+
+  const toggleSet = (setId: string) => {
+    setCompletedSetIds((current) =>
+      current.includes(setId) ? current.filter((item) => item !== setId) : [...current, setId]
+    );
+  };
 
   return (
     <ScreenLayout
@@ -33,12 +47,38 @@ export function WorkoutScreen() {
             <Text style={styles.activeEyebrow}>Sessione in corso</Text>
             <Text style={styles.activeTitle}>{activePlan.title}</Text>
             <Text style={styles.activeMeta}>
-              {activePlan.exercises} esercizi · {activePlan.duration}
+              {completedSets}/{activePlan.sets.length} serie · {activePlan.rest} recupero
             </Text>
           </View>
           <Text style={styles.finishAction} onPress={() => setActivePlanId(null)}>
             Termina
           </Text>
+        </View>
+      ) : null}
+
+      {activePlan ? (
+        <View style={styles.tracker}>
+          <View style={styles.tableHeader}>
+            <Text style={styles.tableHeaderText}>Set</Text>
+            <Text style={[styles.tableHeaderText, styles.tableExercise]}>Esercizio</Text>
+            <Text style={styles.tableHeaderText}>Kg</Text>
+            <Text style={styles.tableHeaderText}>Reps</Text>
+          </View>
+          {activePlan.sets.map((set, index) => {
+            const setId = `${activePlan.id}-${index}`;
+            return (
+              <WorkoutSetRow
+                key={setId}
+                index={index}
+                label={set.label}
+                previous={set.previous}
+                kg={set.kg}
+                reps={set.reps}
+                completed={completedSetIds.includes(setId)}
+                onToggle={() => toggleSet(setId)}
+              />
+            );
+          })}
         </View>
       ) : null}
 
@@ -60,7 +100,7 @@ export function WorkoutScreen() {
             rest={plan.rest}
             exercisePreview={plan.exercisePreview}
             active={activePlanId === plan.id}
-            onStart={() => setActivePlanId(plan.id)}
+            onStart={() => startPlan(plan.id)}
           />
         ))}
       </View>
@@ -124,6 +164,28 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 14
+  },
+  tracker: {
+    gap: 10,
+    marginBottom: 22
+  },
+  tableHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 14
+  },
+  tableHeaderText: {
+    width: 44,
+    color: colors.muted,
+    fontSize: 11,
+    fontWeight: "900",
+    textAlign: "center",
+    textTransform: "uppercase"
+  },
+  tableExercise: {
+    flex: 1,
+    textAlign: "left"
   },
   footerSession: {
     flexDirection: "row",
