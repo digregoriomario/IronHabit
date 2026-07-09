@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "../theme/colors";
+import { radius } from "../theme/ui";
 
 interface PlaceholderCardProps {
   icon: ComponentProps<typeof MaterialCommunityIcons>["name"];
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     backgroundColor: colors.card
   },
   icon: {
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     height: 48,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 14,
+    borderRadius: radius.md,
     backgroundColor: colors.surface
   },
   copy: {
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontSize: 17,
-    fontWeight: "700"
+    fontWeight: "800"
   },
   description: {
     marginTop: 4,

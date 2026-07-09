@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "../theme/colors";
+import { radius } from "../theme/ui";
 
 interface MetricCardProps {
   label: string;
@@ -25,23 +26,25 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     backgroundColor: colors.card
   },
   label: {
     color: colors.muted,
     fontSize: 13,
-    fontWeight: "700"
+    fontWeight: "800",
+    textTransform: "uppercase"
   },
   value: {
     marginTop: 8,
     color: colors.text,
     fontSize: 28,
-    fontWeight: "800"
+    fontWeight: "900"
   },
   helper: {
     marginTop: 2,
     color: colors.muted,
-    fontSize: 12
+    fontSize: 12,
+    lineHeight: 16
   }
 });

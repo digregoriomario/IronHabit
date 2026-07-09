@@ -2,12 +2,15 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors } from "../theme/colors";
+import { radius } from "../theme/ui";
 
 interface WorkoutPlanCardProps {
   title: string;
   description: string;
   exercises: number;
   duration: string;
+  rest?: string;
+  exercisePreview?: string[];
   active?: boolean;
   onStart: () => void;
 }
@@ -17,6 +20,8 @@ export function WorkoutPlanCard({
   description,
   exercises,
   duration,
+  rest,
+  exercisePreview = [],
   active = false,
   onStart
 }: WorkoutPlanCardProps) {
@@ -36,6 +41,16 @@ export function WorkoutPlanCard({
 
       <Text style={styles.description}>{description}</Text>
 
+      {exercisePreview.length ? (
+        <View style={styles.previewList}>
+          {exercisePreview.map((item) => (
+            <View key={item} style={styles.previewPill}>
+              <Text style={styles.previewText}>{item}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
+
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={active ? `Sessione ${title} già attiva` : `Avvia sessione ${title}`}
@@ -53,7 +68,7 @@ export function WorkoutPlanCard({
           color={active ? "#07130B" : colors.text}
         />
         <Text style={[styles.startButtonText, active && styles.activeButtonText]}>
-          {active ? "Sessione attiva" : "Avvia sessione"}
+          {active ? "Sessione attiva" : rest ? `Avvia · rec. ${rest}` : "Avvia sessione"}
         </Text>
       </Pressable>
     </View>
@@ -65,7 +80,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 18,
+    borderRadius: radius.lg,
     backgroundColor: colors.card
   },
   activeCard: {
@@ -81,7 +96,7 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 14,
+    borderRadius: radius.md,
     backgroundColor: colors.surface
   },
   titleBlock: {
@@ -90,7 +105,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontSize: 18,
-    fontWeight: "800"
+    fontWeight: "900"
   },
   meta: {
     marginTop: 4,
@@ -104,6 +119,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20
   },
+  previewList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 14
+  },
+  previewPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: colors.surfaceRaised
+  },
+  previewText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: "800"
+  },
   startButton: {
     marginTop: 16,
     minHeight: 44,
@@ -111,7 +143,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    borderRadius: 14,
+    borderRadius: radius.md,
     backgroundColor: colors.primary
   },
   activeButton: {
