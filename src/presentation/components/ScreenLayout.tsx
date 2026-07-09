@@ -3,14 +3,16 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors } from "../theme/colors";
+import { spacing, typography } from "../theme/ui";
 
 interface ScreenLayoutProps {
   title: string;
   subtitle: string;
   children: ReactNode;
+  footer?: ReactNode;
 }
 
-export function ScreenLayout({ title, subtitle, children }: ScreenLayoutProps) {
+export function ScreenLayout({ title, subtitle, children, footer }: ScreenLayoutProps) {
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <ScrollView
@@ -26,6 +28,7 @@ export function ScreenLayout({ title, subtitle, children }: ScreenLayoutProps) {
 
         {children}
       </ScrollView>
+      {footer ? <View style={styles.footer}>{footer}</View> : null}
     </SafeAreaView>
   );
 }
@@ -39,28 +42,37 @@ const styles = StyleSheet.create({
     flex: 1
   },
   content: {
-    padding: 20,
+    padding: spacing.xl,
     paddingBottom: 40
   },
   header: {
-    marginBottom: 24
+    marginBottom: spacing.xl
   },
   eyebrow: {
     marginBottom: 6,
     color: colors.primary,
-    fontSize: 12,
+    fontSize: typography.caption,
     fontWeight: "800",
     letterSpacing: 1.5
   },
   title: {
     color: colors.text,
-    fontSize: 32,
-    fontWeight: "800"
+    fontSize: typography.screenTitle,
+    fontWeight: "900",
+    letterSpacing: -0.4
   },
   subtitle: {
     marginTop: 8,
     color: colors.muted,
     fontSize: 16,
     lineHeight: 23
+  },
+  footer: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.surface
   }
 });
