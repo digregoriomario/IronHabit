@@ -3,6 +3,7 @@ import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { HomeScreen } from "../screens/HomeScreen";
+import { ExerciseLibraryScreen } from "../screens/ExerciseLibraryScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import { WorkoutScreen } from "../screens/WorkoutScreen";
 import { colors } from "../theme/colors";
@@ -45,6 +46,7 @@ export function AppNavigator() {
             const icons = {
               Home: "home-variant-outline",
               Allenamento: "dumbbell",
+              Esercizi: "arm-flex-outline",
               Profilo: "account-outline"
             } as const;
 
@@ -54,6 +56,7 @@ export function AppNavigator() {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Allenamento" component={WorkoutScreen} />
+        <Tab.Screen name="Esercizi" component={ExerciseLibraryScreen} />
         <Tab.Screen name="Profilo" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
