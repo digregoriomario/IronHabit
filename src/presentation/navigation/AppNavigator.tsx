@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { HomeScreen } from "../screens/HomeScreen";
 import { ExerciseLibraryScreen } from "../screens/ExerciseLibraryScreen";
+import { HistoryScreen } from "../screens/HistoryScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
 import { WorkoutScreen } from "../screens/WorkoutScreen";
 import { colors } from "../theme/colors";
@@ -47,6 +48,7 @@ export function AppNavigator() {
               Home: "home-variant-outline",
               Allenamento: "dumbbell",
               Esercizi: "arm-flex-outline",
+              Storico: "history",
               Profilo: "account-outline"
             } as const;
 
@@ -57,6 +59,7 @@ export function AppNavigator() {
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Allenamento" component={WorkoutScreen} />
         <Tab.Screen name="Esercizi" component={ExerciseLibraryScreen} />
+        <Tab.Screen name="Storico" component={HistoryScreen} />
         <Tab.Screen name="Profilo" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
