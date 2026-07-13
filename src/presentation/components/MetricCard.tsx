@@ -1,50 +1,22 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
+import { Card } from "./Card";
 import { colors } from "../theme/colors";
-import { radius } from "../theme/ui";
 
-interface MetricCardProps {
-  label: string;
-  value: string;
-  helper: string;
-}
-
-export function MetricCard({ label, value, helper }: MetricCardProps) {
+export function MetricCard({ label, value, accent = colors.primary, icon: Icon }) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{value}</Text>
-      <Text style={styles.helper}>{helper}</Text>
-    </View>
+    <Card className="min-h-24 flex-1">
+      <View className="flex-row items-start justify-between">
+        <View className="flex-1 pr-2">
+          <Text className="text-2xl font-semibold leading-7 text-iron-text">{value}</Text>
+          <Text className="mt-2 text-xs font-semibold uppercase tracking-wide text-iron-muted">{label}</Text>
+        </View>
+        {Icon ? (
+          <View className="h-9 w-9 items-center justify-center rounded-md border border-iron-line bg-iron-surface">
+            <Icon size={18} color={accent} />
+          </View>
+        ) : null}
+      </View>
+    </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    minWidth: 96,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card
-  },
-  label: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: "800",
-    textTransform: "uppercase"
-  },
-  value: {
-    marginTop: 8,
-    color: colors.text,
-    fontSize: 28,
-    fontWeight: "900"
-  },
-  helper: {
-    marginTop: 2,
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 16
-  }
-});

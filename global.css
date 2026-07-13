@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --iron-bg: 255 255 255;
+    --iron-surface: 245 245 245;
+    --iron-card: 255 255 255;
+    --iron-line: 224 224 224;
+    --iron-strongLine: 0 0 0;
+    --iron-text: 0 0 0;
+    --iron-muted: 102 102 102;
+    --iron-subtle: 136 136 136;
+    --iron-primary: 0 0 0;
+    --iron-primaryPressed: 0 0 0;
+    --iron-success: 21 128 61;
+    --iron-successPressed: 22 101 52;
+    --iron-successSoft: 236 253 243;
+    --iron-successText: 22 101 52;
+    --iron-warning: 180 83 9;
+    --iron-warningPressed: 146 64 14;
+    --iron-warningSoft: 255 247 237;
+    --iron-warningText: 146 64 14;
+    --iron-info: 37 99 235;
+    --iron-infoPressed: 29 78 216;
+    --iron-infoSoft: 239 246 255;
+    --iron-infoText: 29 78 216;
+    --iron-danger: 220 38 38;
+    --iron-dangerPressed: 185 28 28;
+    --iron-dangerSoft: 254 242 242;
+    --iron-dangerText: 185 28 28;
+    --iron-red: 220 38 38;
+    --iron-amber: 180 83 9;
+    --iron-cyan: 37 99 235;
+    --iron-green: 21 128 61;
+    --iron-purple: 109 40 217;
+    --iron-inverseText: 255 255 255;
+  }
+
+  .dark:root {
+    --iron-bg: 9 9 11;
+    --iron-surface: 24 24 27;
+    --iron-card: 17 17 19;
+    --iron-line: 42 42 46;
+    --iron-strongLine: 255 255 255;
+    --iron-text: 247 247 248;
+    --iron-muted: 161 161 170;
+    --iron-subtle: 113 113 122;
+    --iron-primary: 255 255 255;
+    --iron-primaryPressed: 228 228 231;
+    --iron-success: 34 197 94;
+    --iron-successPressed: 22 163 74;
+    --iron-successSoft: 5 46 22;
+    --iron-successText: 134 239 172;
+    --iron-warning: 245 158 11;
+    --iron-warningPressed: 217 119 6;
+    --iron-warningSoft: 69 26 3;
+    --iron-warningText: 252 211 77;
+    --iron-info: 96 165 250;
+    --iron-infoPressed: 59 130 246;
+    --iron-infoSoft: 23 37 84;
+    --iron-infoText: 191 219 254;
+    --iron-danger: 248 113 113;
+    --iron-dangerPressed: 239 68 68;
+    --iron-dangerSoft: 69 10 10;
+    --iron-dangerText: 254 202 202;
+    --iron-red: 248 113 113;
+    --iron-amber: 245 158 11;
+    --iron-cyan: 96 165 250;
+    --iron-green: 34 197 94;
+    --iron-purple: 167 139 250;
+    --iron-inverseText: 9 9 11;
+  }
+}
+
+*:focus,
+*:focus-visible {
+  outline-color: #000000 !important;
+  box-shadow: none !important;
+}
