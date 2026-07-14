@@ -66,7 +66,7 @@ export function GoalDetailScreen({ navigation, route }) {
           {goal.category === "frequency" ? (
             <>
               <Info label="Settimana" value={`${formatDate(goal.startDate)} - ${formatDate(goal.deadline)}`} />
-              <Info label="Allenamenti richiesti" value={`${goal.targetValue}`} />
+              <Info label="Giorni richiesti" value={`${goal.targetValue}`} />
             </>
           ) : (
             <>
@@ -93,7 +93,7 @@ function GoalStatusIcon({ completed }) {
 function formatGoalProgress(goal) {
   if (goal.category === "load") return `${goal.currentValue} / ${goal.targetValue} kg`;
   if (goal.category === "reps") return `${goal.currentValue} / ${goal.targetValue} ripetizioni`;
-  return `${goal.currentValue} / ${goal.targetValue} allenamenti`;
+  return `${goal.currentValue} / ${goal.targetValue} giorni`;
 }
 
 function formatGoalTarget(goal) {

@@ -8,7 +8,7 @@ import { AppSelect } from "../components/AppSelect";
 import { Card } from "../components/Card";
 import { RestTimerSelect } from "../components/RestTimerSelect";
 import { ScreenContainer } from "../components/ScreenContainer";
-import { colors } from "../theme/colors";
+import { colors, normalizeThemeMode } from "../theme/colors";
 import { themeModeOptions } from "../utils/labels";
 import { useIronHabitStore } from "../store/useIronHabitStore";
 
@@ -16,7 +16,7 @@ export function InitialSetupScreen() {
   const settings = useIronHabitStore((state) => state.settings);
   const updateSettings = useIronHabitStore((state) => state.updateSettings);
   const [profileName, setProfileName] = useState(settings.profileName || "");
-  const [themeMode, setThemeMode] = useState(settings.themeMode || "system");
+  const [themeMode, setThemeMode] = useState(() => normalizeThemeMode(settings.themeMode));
   const [soundEnabled, setSoundEnabled] = useState(settings.soundEnabled);
   const [vibrationEnabled, setVibrationEnabled] = useState(settings.vibrationEnabled);
   const [defaultRestSeconds, setDefaultRestSeconds] = useState(settings.defaultRestSeconds || 90);

@@ -1,21 +1,23 @@
 import {
+  Check,
   ChevronDown,
   Dumbbell,
   MoreVertical,
-  Plus
+  Plus,
+  Trash2
 } from "lucide-react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Platform, Pressable, ScrollView, StatusBar, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { SET_TYPES } from "../../domain/constants";
 import {
   createTrackingTarget,
   formatTrackingValue,
   getTrackingFields
 } from "../../domain/exerciseTracking";
+import { getNextSetType, getSetBadgeLabel, getSetTitle, isWarmupSet, normalizeWarmupOrder } from "../../domain/setRules";
 import { hasActiveWorkoutPlanChanges } from "../../usecases/guidedWorkoutUseCases";
-import { playSetCompletionFeedback, playTimerFeedback } from "../utils/sound";
+import { playSetCompletionFeedback } from "../utils/sound";
 import { AppButton } from "../components/AppButton";
 import { Checkbox } from "../components/ui/checkbox";
 import { EmptyState } from "../components/EmptyState";
@@ -30,20 +32,20 @@ const SET_TABLE_WIDTHS = {
   set: 52,
   ok: 60
 };
+const REST_TIMER_ACCENT = {
+  bg: "#FEF3C7",
+  border: "#F59E0B",
+  text: "#92400E"
+};
 
-const getSetTypeMeta = (type, index) => {
+const getSetTypeMeta = (type, label) => {
   const setTypeMeta = {
-    Normale: { label: `${index + 1}`, bg: colors.card, text: colors.text },
+    Normale: { label, bg: colors.card, text: colors.text },
     Riscaldamento: { label: "W", bg: colors.warningSoft, text: colors.warningText },
     "Drop set": { label: "D", bg: colors.line, text: colors.text },
     Failure: { label: "F", bg: colors.dangerSoft, text: colors.dangerText }
   };
   return setTypeMeta[type] || setTypeMeta.Normale;
-};
-
-const nextSetType = (type) => {
-  const currentIndex = SET_TYPES.indexOf(type || "Normale");
-  return SET_TYPES[(currentIndex + 1) % SET_TYPES.length];
 };
 
 export function GuidedWorkoutScreen({ navigation, route }) {
@@ -60,7 +62,6 @@ export function GuidedWorkoutScreen({ navigation, route }) {
   const completeActiveWorkout = useIronHabitStore((state) => state.completeActiveWorkout);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const timerCompletedRef = useRef(false);
   const initializedRef = useRef(false);
   const topInset = Math.max(insets.top, Platform.OS === "android" ? StatusBar.currentHeight ?? 0 : 0);
 
@@ -77,21 +78,16 @@ export function GuidedWorkoutScreen({ navigation, route }) {
   useEffect(() => {
     if (!activeWorkout?.restTimerEndsAt) {
       setSecondsLeft(0);
-      timerCompletedRef.current = false;
       return undefined;
     }
     const tick = () => {
       const remaining = Math.max(0, Math.ceil((activeWorkout.restTimerEndsAt - Date.now()) / 1000));
       setSecondsLeft(remaining);
-      if (remaining === 0 && !timerCompletedRef.current) {
-        timerCompletedRef.current = true;
-        playTimerFeedback(settings);
-      }
     };
     tick();
     const interval = setInterval(tick, 250);
     return () => clearInterval(interval);
-  }, [activeWorkout?.restTimerEndsAt, settings]);
+  }, [activeWorkout?.restTimerEndsAt]);
 
   useEffect(() => {
     if (!activeWorkout?.startedAt) return undefined;
@@ -159,12 +155,13 @@ export function GuidedWorkoutScreen({ navigation, route }) {
           ? exercise
           : {
               ...exercise,
-              sets: exercise.sets.map((set, indexOfSet) => indexOfSet === setIndex ? nextSetWithRest : set)
+              sets: normalizeWarmupOrder(
+                exercise.sets.map((set, indexOfSet) => indexOfSet === setIndex ? nextSetWithRest : set)
+              )
             }
       )
     });
     if (shouldStartTimer) {
-      timerCompletedRef.current = false;
       playSetCompletionFeedback(settings);
     }
   };
@@ -202,17 +199,18 @@ export function GuidedWorkoutScreen({ navigation, route }) {
     const exercise = exercises.find((item) => item.id === workoutExercise.exerciseId);
     const restSeconds = Number(workoutExercise.restSeconds ?? previous?.restSeconds ?? settings.defaultRestSeconds);
     updateExercise(exerciseIndex, {
-      sets: [
+      sets: normalizeWarmupOrder([
         ...workoutExercise.sets,
         {
           ...createTrackingTarget(exercise),
           ...previous,
           setNumber: workoutExercise.sets.length + 1,
+          type: isWarmupSet(previous) ? "Normale" : previous?.type || "Normale",
           restSeconds,
           rpe: 0,
           completed: false
         }
-      ]
+      ])
     });
   };
 
@@ -220,9 +218,9 @@ export function GuidedWorkoutScreen({ navigation, route }) {
     const workoutExercise = activeWorkout.exercises[exerciseIndex];
     if (workoutExercise.sets.length === 1) return;
     updateExercise(exerciseIndex, {
-      sets: workoutExercise.sets
+      sets: normalizeWarmupOrder(workoutExercise.sets
         .filter((_, index) => index !== setIndex)
-        .map((set, index) => ({ ...set, setNumber: index + 1 }))
+        .map((set, index) => ({ ...set, setNumber: index + 1 })))
     });
   };
 
@@ -252,6 +250,17 @@ export function GuidedWorkoutScreen({ navigation, route }) {
   const deleteDraftWorkout = () => {
     discardActiveWorkout();
     navigation.goBack();
+  };
+
+  const confirmDeleteWorkout = () => {
+    Alert.alert(
+      "Eliminare allenamento?",
+      "La sessione attiva verra eliminata e non sara salvata nello storico.",
+      [
+        { text: "Annulla", style: "cancel" },
+        { text: "Elimina", style: "destructive", onPress: deleteDraftWorkout }
+      ]
+    );
   };
 
   const saveWorkout = (savePlanChanges = false) => {
@@ -288,18 +297,11 @@ export function GuidedWorkoutScreen({ navigation, route }) {
 
   const finish = () => {
     if (!activeWorkout.exercises.length) {
-      Alert.alert("Allenamento vuoto", "Aggiungi almeno un esercizio prima di salvare, oppure elimina questa sessione attiva.", [
-        { text: "Continua allenamento", style: "cancel" },
-        { text: "Elimina allenamento", style: "destructive", onPress: deleteDraftWorkout }
-      ]);
+      Alert.alert("Allenamento vuoto", "Aggiungi almeno un esercizio prima di salvare.");
       return;
     }
 
-    Alert.alert("Completa allenamento", "Vuoi salvare l'allenamento nello storico o eliminare questa sessione attiva?", [
-      { text: "Continua allenamento", style: "cancel" },
-      { text: "Elimina allenamento", style: "destructive", onPress: deleteDraftWorkout },
-      { text: "Salva allenamento", onPress: confirmSaveWorkout }
-    ]);
+    confirmSaveWorkout();
   };
 
   return (
@@ -317,14 +319,24 @@ export function GuidedWorkoutScreen({ navigation, route }) {
 
           <Text className="min-w-0 flex-1 text-lg font-semibold text-iron-text" numberOfLines={1}>Allenamento</Text>
 
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Completa allenamento"
-            onPress={finish}
-            className="min-h-12 justify-center rounded-md border border-iron-success bg-iron-successSoft px-4"
-          >
-            <Text className="text-lg font-semibold text-iron-successText">Completa</Text>
-          </Pressable>
+          <View className="flex-row items-center gap-2">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Elimina allenamento"
+              onPress={confirmDeleteWorkout}
+              className="h-12 w-12 items-center justify-center rounded-md border border-iron-danger bg-iron-dangerSoft"
+            >
+              <Trash2 size={22} color={colors.dangerText} />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Completa allenamento"
+              onPress={finish}
+              className="h-12 w-12 items-center justify-center rounded-md border border-iron-success bg-iron-successSoft"
+            >
+              <Check size={24} color={colors.successText} />
+            </Pressable>
+          </View>
         </View>
       </View>
 
@@ -335,15 +347,18 @@ export function GuidedWorkoutScreen({ navigation, route }) {
           <WorkoutMetric label="Serie" value={`${totals.completed}/${totals.all}`} />
         </View>
         {activeWorkout.restTimerEndsAt && secondsLeft > 0 ? (
-          <View className="mt-4 flex-row items-center justify-between rounded-md border border-iron-line bg-iron-surface px-4 py-3">
-            <Text className="font-semibold text-iron-text">Recupero</Text>
-            <Text className="text-2xl font-semibold text-iron-text">{formatSeconds(secondsLeft)}</Text>
+          <View
+            className="mt-4 flex-row items-center justify-between rounded-md border px-4 py-3"
+            style={{ backgroundColor: REST_TIMER_ACCENT.bg, borderColor: REST_TIMER_ACCENT.border }}
+          >
+            <Text className="font-semibold" style={{ color: REST_TIMER_ACCENT.text }}>Recupero</Text>
+            <Text className="text-2xl font-semibold" style={{ color: REST_TIMER_ACCENT.text }}>{formatSeconds(secondsLeft)}</Text>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Aggiungi trenta secondi"
               onPress={() => replaceActiveWorkout({ ...activeWorkout, restTimerEndsAt: activeWorkout.restTimerEndsAt + 30000 })}
             >
-              <Text className="font-semibold text-iron-text">+30s</Text>
+              <Text className="font-semibold" style={{ color: REST_TIMER_ACCENT.text }}>+30s</Text>
             </Pressable>
           </View>
         ) : null}
@@ -450,7 +465,8 @@ function SetTable({ exercise, workoutExercise, trackingFields, workoutLogs, upda
 
       {workoutExercise.sets.map((set, setIndex) => {
         const previous = getPreviousSet(workoutLogs, workoutExercise.exerciseId, setIndex);
-        const meta = getSetTypeMeta(set.type, setIndex);
+        const setTitle = getSetTitle(workoutExercise.sets, setIndex);
+        const meta = getSetTypeMeta(set.type, getSetBadgeLabel(workoutExercise.sets, setIndex));
         const rowBackground = setIndex % 2 === 0 ? colors.card : colors.surface;
         const valueColor = set.completed ? colors.subtle : colors.text;
 
@@ -460,9 +476,9 @@ function SetTable({ exercise, workoutExercise, trackingFields, workoutLogs, upda
               <View className="justify-center" style={{ width: SET_TABLE_WIDTHS.set }}>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={`Tipo serie ${setIndex + 1}: ${set.type || "Normale"}`}
+                  accessibilityLabel={`Tipo ${setTitle}: ${set.type || "Normale"}`}
                   accessibilityHint="Tocca per cambiare tipo di serie"
-                  onPress={() => updateSet(setIndex, { type: nextSetType(set.type) })}
+                  onPress={() => updateSet(setIndex, { type: getNextSetType(workoutExercise.sets, setIndex) })}
                   className="h-11 w-11 items-center justify-center rounded-md border border-iron-line"
                   style={{ backgroundColor: meta.bg }}
                 >
@@ -481,7 +497,7 @@ function SetTable({ exercise, workoutExercise, trackingFields, workoutLogs, upda
               {trackingFields.map((field) => (
                 <View key={field.key} className="justify-center px-1" style={{ flex: 0.58 }}>
                   <TableNumberInput
-                    accessibilityLabel={`${field.label} serie ${setIndex + 1}`}
+                    accessibilityLabel={`${field.label} ${setTitle.toLowerCase()}`}
                     value={set[field.key]}
                     color={valueColor}
                     onChangeText={(value) => updateSet(setIndex, { [field.key]: value })}
@@ -492,7 +508,7 @@ function SetTable({ exercise, workoutExercise, trackingFields, workoutLogs, upda
               <View className="items-end justify-center" style={{ width: SET_TABLE_WIDTHS.ok }}>
                 <Checkbox
                   checked={set.completed}
-                  label={`Serie ${setIndex + 1} completata`}
+                  label={`${setTitle} completata`}
                   onCheckedChange={(checked) => updateSet(setIndex, { completed: checked })}
                 />
               </View>

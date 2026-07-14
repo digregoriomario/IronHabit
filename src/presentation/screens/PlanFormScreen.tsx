@@ -1,38 +1,40 @@
 import { useFocusEffect } from "@react-navigation/native";
-import { Dumbbell, GripVertical, Plus, Save, Trash2 } from "lucide-react-native";
+import { Dumbbell, MoreVertical, Plus, Save } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
-import { SET_TYPES } from "../../domain/constants";
 import { createPlanExercise } from "../../domain/entities";
 import { createTrackingTarget, getTrackingFields } from "../../domain/exerciseTracking";
+import { getNextSetType, getSetBadgeLabel, getSetTitle, isWarmupSet, normalizeWarmupOrder } from "../../domain/setRules";
 import type { Exercise, PlanExercise, PlanSetTarget, SetType } from "../../domain/types";
 import { AppButton } from "../components/AppButton";
 import { AppInput } from "../components/AppInput";
-import { Card } from "../components/Card";
 import { EmptyState } from "../components/EmptyState";
-import { IconButton } from "../components/IconButton";
 import { PageHeader } from "../components/PageHeader";
 import { RestTimerSelect } from "../components/RestTimerSelect";
 import { ScreenContainer } from "../components/ScreenContainer";
-import { SectionHeader } from "../components/SectionHeader";
 import { useIronHabitStore } from "../store/useIronHabitStore";
 import { colors } from "../theme/colors";
+import { FORM_HEADER_TOP_PADDING, FORM_SCREEN_EDGES } from "../theme/layout";
 import { showValidationAlert, validationTitle } from "../utils/alerts";
 
 const blankPlan = {
   name: "",
   description: "",
   goal: "Allenamento generale",
-  level: "Starter",
+  level: "Base",
   expectedDuration: "45",
   recommendedFrequency: "",
   exercises: [],
   notes: ""
 };
 
+const SET_TABLE_WIDTHS = {
+  set: 52
+};
+
 const targetsFor = (item: PlanExercise, exercise?: Exercise): PlanSetTarget[] =>
-  Array.isArray(item.setTargets) && item.setTargets.length
+  normalizeWarmupOrder(Array.isArray(item.setTargets) && item.setTargets.length
     ? item.setTargets.map((target) => ({ ...createTrackingTarget(exercise), ...target }))
     : Array.from({ length: Math.max(1, Number(item.sets || 1)) }).map(() => ({
         ...createTrackingTarget(exercise, {
@@ -42,7 +44,7 @@ const targetsFor = (item: PlanExercise, exercise?: Exercise): PlanSetTarget[] =>
           durationSeconds: Number(item.durationSeconds || 0),
           distanceKm: 0
         })
-      }));
+      })));
 
 const hydratePlan = (plan, exercises: Exercise[]) => ({
   ...plan,
@@ -52,8 +54,8 @@ const hydratePlan = (plan, exercises: Exercise[]) => ({
   }))
 });
 
-const getSetTypeMeta = (type: SetType): { label: string; background: string; text: string } => ({
-  Normale: { label: "", background: colors.line, text: colors.text },
+const getSetTypeMeta = (type: SetType, label: string): { label: string; background: string; text: string } => ({
+  Normale: { label, background: colors.line, text: colors.text },
   Riscaldamento: { label: "W", background: colors.warningSoft, text: colors.warningText },
   "Drop set": { label: "D", background: colors.line, text: colors.text },
   Failure: { label: "F", background: colors.dangerSoft, text: colors.dangerText }
@@ -85,11 +87,11 @@ export function PlanFormScreen({ navigation, route }) {
               return createPlanExercise({
                 exerciseId,
                 order: current.exercises.length + offset + 1,
-                sets: 3,
+                sets: 1,
                 reps: target.reps,
                 loadKg: target.loadKg,
                 durationSeconds: target.durationSeconds,
-                setTargets: Array.from({ length: 3 }).map(() => ({ ...target }))
+                setTargets: [{ ...target }]
               });
             }
           )
@@ -121,12 +123,20 @@ export function PlanFormScreen({ navigation, route }) {
     );
   };
 
+  const moveRow = (index, direction) => {
+    const nextIndex = index + direction;
+    if (nextIndex < 0 || nextIndex >= form.exercises.length) return;
+    const next = form.exercises.slice();
+    [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+    setField("exercises", next.map((item, itemIndex) => ({ ...item, order: itemIndex + 1 })));
+  };
+
   const updateSetTarget = (exerciseIndex: number, setIndex: number, patch: Partial<PlanSetTarget>) => {
     const item = form.exercises[exerciseIndex];
     const exercise = exercises.find((entry) => entry.id === item.exerciseId);
-    const setTargets = targetsFor(item, exercise).map((target, index) =>
+    const setTargets = normalizeWarmupOrder(targetsFor(item, exercise).map((target, index) =>
       index === setIndex ? { ...target, ...patch } : target
-    );
+    ));
     updateRow(exerciseIndex, { setTargets, sets: setTargets.length });
   };
 
@@ -135,7 +145,13 @@ export function PlanFormScreen({ navigation, route }) {
     const exercise = exercises.find((entry) => entry.id === item.exerciseId);
     const currentTargets = targetsFor(item, exercise);
     const previous = currentTargets.at(-1) || createTrackingTarget(exercise);
-    const setTargets = [...currentTargets, { ...previous }];
+    const setTargets = normalizeWarmupOrder([
+      ...currentTargets,
+      {
+        ...previous,
+        type: isWarmupSet(previous) ? "Normale" : previous.type
+      }
+    ]);
     updateRow(exerciseIndex, { setTargets, sets: setTargets.length });
   };
 
@@ -144,16 +160,34 @@ export function PlanFormScreen({ navigation, route }) {
     const exercise = exercises.find((entry) => entry.id === item.exerciseId);
     const currentTargets = targetsFor(item, exercise);
     if (currentTargets.length === 1) return;
-    const setTargets = currentTargets.filter((_, index) => index !== setIndex);
+    const setTargets = normalizeWarmupOrder(currentTargets.filter((_, index) => index !== setIndex));
     updateRow(exerciseIndex, { setTargets, sets: setTargets.length });
   };
 
   const cycleSetType = (exerciseIndex: number, setIndex: number) => {
     const item = form.exercises[exerciseIndex];
     const exercise = exercises.find((entry) => entry.id === item.exerciseId);
-    const currentType = targetsFor(item, exercise)[setIndex].type;
-    const nextType = SET_TYPES[(SET_TYPES.indexOf(currentType) + 1) % SET_TYPES.length] as SetType;
+    const nextType = getNextSetType(targetsFor(item, exercise), setIndex);
     updateSetTarget(exerciseIndex, setIndex, { type: nextType });
+  };
+
+  const openExerciseMenu = (exerciseIndex: number, item: PlanExercise, exercise?: Exercise) => {
+    const setTargets = targetsFor(item, exercise);
+    const actions = [
+      exerciseIndex > 0
+        ? { text: "Sposta su", onPress: () => moveRow(exerciseIndex, -1) }
+        : null,
+      exerciseIndex < form.exercises.length - 1
+        ? { text: "Sposta giu", onPress: () => moveRow(exerciseIndex, 1) }
+        : null,
+      setTargets.length > 1
+        ? { text: "Rimuovi ultima serie", onPress: () => removeSet(exerciseIndex, setTargets.length - 1) }
+        : null,
+      { text: "Rimuovi esercizio", style: "destructive", onPress: () => removeRow(exerciseIndex) },
+      { text: "Annulla", style: "cancel" }
+    ].filter(Boolean) as any;
+
+    Alert.alert(exercise?.name || "Esercizio", "Modifica questo esercizio.", actions);
   };
 
   const save = () => {
@@ -184,132 +218,108 @@ export function PlanFormScreen({ navigation, route }) {
   }
 
   return (
-    <ScreenContainer>
+    <ScreenContainer edges={FORM_SCREEN_EDGES}>
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
-          <PageHeader title={id ? "Modifica scheda" : "Nuova scheda"} />
-
-          <View className="gap-4">
-            <AppInput label="Nome scheda" value={form.name} onChangeText={(value) => setField("name", value)} placeholder="Es. Push day" />
-            <AppInput label="Descrizione (opzionale)" value={form.description} onChangeText={(value) => setField("description", value)} multiline placeholder="Obiettivo e indicazioni della scheda" />
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <View className="border-b border-iron-line bg-iron-card px-4 pb-5" style={{ paddingTop: FORM_HEADER_TOP_PADDING }}>
+            <PageHeader title={id ? "Modifica scheda" : "Nuova scheda"} />
+            <View className="gap-4">
+              <AppInput label="Nome scheda" value={form.name} onChangeText={(value) => setField("name", value)} placeholder="Es. Push day" />
+              <AppInput label="Descrizione (opzionale)" value={form.description} onChangeText={(value) => setField("description", value)} multiline placeholder="Obiettivo e indicazioni della scheda" />
+            </View>
           </View>
 
-          <SectionHeader
-            title="Esercizi"
-            action={<AppButton title="Aggiungi esercizi" icon={Plus} variant="info" onPress={openExercisePicker} />}
-          />
+          <View className="border-b border-iron-line bg-iron-card px-4 py-4">
+            <View className="flex-row items-center justify-between gap-3">
+              <Text className="text-xl font-semibold text-iron-text">Esercizi</Text>
+              <AppButton title="Aggiungi esercizi" icon={Plus} variant="info" size="sm" onPress={openExercisePicker} />
+            </View>
+          </View>
 
-          <View className="gap-4">
+          <View>
             {form.exercises.map((item, exerciseIndex) => {
               const exercise = exercises.find((entry) => entry.id === item.exerciseId);
               const setTargets = targetsFor(item, exercise);
               const trackingFields = getTrackingFields(exercise);
               return (
-                <Card key={item.id || exerciseIndex} className="overflow-hidden p-0">
-                  <View className="flex-row items-center gap-3 border-b border-iron-line p-4">
-                    <View className="h-12 w-12 items-center justify-center rounded-md border border-iron-line bg-iron-surface">
-                      <Dumbbell size={22} color={colors.text} />
+                <View key={item.id || exerciseIndex} className="border-b border-iron-line bg-iron-card pb-8 pt-7">
+                  <View className="mb-4 flex-row items-center gap-3 px-4">
+                    <View className="h-14 w-14 items-center justify-center rounded-xl bg-iron-surface">
+                      <Dumbbell size={24} color={colors.muted} />
                     </View>
                     <View className="min-w-0 flex-1">
-                      <Text className="text-lg font-semibold leading-6 text-iron-text" numberOfLines={2}>{exercise?.name || "Esercizio"}</Text>
-                      <Text className="mt-1 text-sm font-medium text-iron-muted">{exercise?.primaryMuscle || "Gruppo muscolare"}</Text>
+                      <Text className="text-xl font-semibold leading-6 text-iron-text" numberOfLines={2}>
+                        {exercise?.name || "Esercizio"}
+                      </Text>
+                      <Text className="mt-1 text-sm font-semibold text-iron-muted">
+                        {setTargets.length} {setTargets.length === 1 ? "serie pianificata" : "serie pianificate"}
+                      </Text>
                     </View>
-                    <GripVertical size={20} color={colors.muted} />
-                    <IconButton
-                      label={`Rimuovi ${exercise?.name || "esercizio"}`}
-                      icon={Trash2}
-                      color={colors.danger}
-                      onPress={() => removeRow(exerciseIndex)}
-                    />
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`Opzioni ${exercise?.name || "esercizio"}`}
+                      onPress={() => openExerciseMenu(exerciseIndex, item, exercise)}
+                      className="h-12 w-12 items-center justify-center"
+                    >
+                      <MoreVertical size={30} color={colors.text} />
+                    </Pressable>
                   </View>
 
-                  <View className="gap-3 p-4">
-                    <TextInput
-                      accessibilityLabel={`Note per ${exercise?.name || "esercizio"}`}
-                      value={item.notes}
-                      onChangeText={(notes) => updateRow(exerciseIndex, { notes })}
-                      placeholder="Note esercizio"
-                      placeholderTextColor={colors.muted}
-                      multiline
-                      className="min-h-12 rounded-md border border-iron-line bg-iron-card px-3 py-3 text-base font-normal text-iron-text"
-                    />
+                  <TextInput
+                    accessibilityLabel={`Note per ${exercise?.name || "esercizio"}`}
+                    value={item.notes}
+                    onChangeText={(notes) => updateRow(exerciseIndex, { notes })}
+                    placeholder="Note..."
+                    placeholderTextColor={colors.muted}
+                    multiline
+                    className="mx-4 mb-5 min-h-10 px-0 py-0 text-lg text-iron-text"
+                  />
 
+                  <View className="mb-5 px-4">
                     <RestTimerSelect
-                      label="Timer di recupero"
+                      inline
+                      tone="primary"
+                      label="Recupero"
                       value={item.restSeconds ?? 90}
                       onChange={(restSeconds) => updateRow(exerciseIndex, { restSeconds })}
                     />
+                  </View>
 
-                    <View className="flex-row items-center gap-2 px-1">
-                      <Text className="w-11 text-center text-xs font-semibold uppercase tracking-wide text-iron-muted">Set</Text>
-                      {trackingFields.map((field) => (
-                        <Text key={field.key} className="min-w-0 flex-1 text-center text-xs font-semibold uppercase tracking-wide text-iron-muted">
-                          {field.shortLabel}
-                        </Text>
-                      ))}
-                      <View className="w-11" />
-                    </View>
+                  <PlanSetTable
+                    setTargets={setTargets}
+                    trackingFields={trackingFields}
+                    cycleSetType={(setIndex) => cycleSetType(exerciseIndex, setIndex)}
+                    updateSetTarget={(setIndex, patch) => updateSetTarget(exerciseIndex, setIndex, patch)}
+                  />
 
-                    {setTargets.map((target, setIndex) => {
-                      const meta = getSetTypeMeta(target.type);
-                      return (
-                        <View key={`${item.id}-${setIndex}`} className="flex-row items-center gap-2">
-                          <Pressable
-                            accessibilityRole="button"
-                            accessibilityLabel={`Tipo serie ${setIndex + 1}: ${target.type}`}
-                            accessibilityHint="Tocca per cambiare tipo di serie"
-                            onPress={() => cycleSetType(exerciseIndex, setIndex)}
-                            className="h-11 w-11 items-center justify-center rounded-md border border-iron-line"
-                            style={{ backgroundColor: meta.background }}
-                          >
-                            <Text className="font-semibold" style={{ color: meta.text }}>
-                              {meta.label || setIndex + 1}
-                            </Text>
-                          </Pressable>
-                          {trackingFields.map((field) => (
-                            <SetInput
-                              key={field.key}
-                              label={`${field.label} serie ${setIndex + 1}`}
-                              value={target[field.key]}
-                              onChangeText={(value) => updateSetTarget(exerciseIndex, setIndex, { [field.key]: value })}
-                            />
-                          ))}
-                          <IconButton
-                            label={`Rimuovi serie ${setIndex + 1}`}
-                            icon={Trash2}
-                            color={colors.danger}
-                            disabled={setTargets.length === 1}
-                            onPress={() => removeSet(exerciseIndex, setIndex)}
-                          />
-                        </View>
-                      );
-                    })}
-
+                  <View className="mt-5 flex-row gap-2 px-4">
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel={`Aggiungi serie a ${exercise?.name || "esercizio"}`}
                       onPress={() => addSet(exerciseIndex)}
-                      className="min-h-11 flex-row items-center justify-center gap-2 rounded-md border border-iron-line bg-iron-card"
+                      className="min-h-11 flex-1 flex-row items-center justify-center gap-2 rounded-md border border-iron-line bg-iron-card px-3 py-2"
                     >
-                      <Plus size={18} color={colors.text} />
-                      <Text className="font-semibold text-iron-text">Aggiungi serie</Text>
+                      <Plus size={21} color={colors.text} />
+                      <Text className="text-base font-semibold text-iron-text">Aggiungi serie</Text>
                     </Pressable>
                   </View>
-                </Card>
+                </View>
               );
             })}
 
             {!form.exercises.length ? (
-              <EmptyState
-                title="Aggiungi il primo esercizio"
-                message="Cerca nella libreria, filtra per muscolo e seleziona più esercizi nell'ordine desiderato."
-                action={<AppButton title="Aggiungi esercizi" icon={Plus} variant="info" onPress={openExercisePicker} />}
-              />
+              <View className="px-4 py-6">
+                <EmptyState
+                  title="Aggiungi il primo esercizio"
+                  message="Cerca nella libreria, filtra per muscolo e seleziona più esercizi nell'ordine desiderato."
+                  action={<AppButton title="Aggiungi esercizi" icon={Plus} variant="info" onPress={openExercisePicker} />}
+                />
+              </View>
             ) : null}
           </View>
 
-          <View className="mt-6">
-            <AppButton title="Salva scheda" icon={Save} variant="info" disabled={!form.exercises.length} onPress={save} />
+          <View className="px-4 pt-5">
+            <AppButton title="Salva scheda" icon={Save} variant="info" size="lg" className="min-h-16" disabled={!form.exercises.length} onPress={save} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -317,16 +327,79 @@ export function PlanFormScreen({ navigation, route }) {
   );
 }
 
-function SetInput({ label, value, onChangeText }) {
+function PlanSetTable({ setTargets, trackingFields, cycleSetType, updateSetTarget }) {
+  return (
+    <View>
+      <View className="flex-row items-center px-4 pb-3">
+        <TableHeaderCell width={SET_TABLE_WIDTHS.set}>SET</TableHeaderCell>
+        {trackingFields.map((field) => (
+          <TableHeaderCell key={field.key} flex={1}>{field.shortLabel.toUpperCase()}</TableHeaderCell>
+        ))}
+      </View>
+
+      {setTargets.map((target, setIndex) => {
+        const setTitle = getSetTitle(setTargets, setIndex);
+        const meta = getSetTypeMeta(target.type, getSetBadgeLabel(setTargets, setIndex));
+        const rowBackground = setIndex % 2 === 0 ? colors.card : colors.surface;
+
+        return (
+          <View key={setIndex} style={{ backgroundColor: rowBackground }}>
+            <View className="min-h-20 flex-row items-center px-4">
+              <View className="justify-center" style={{ width: SET_TABLE_WIDTHS.set }}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Tipo ${setTitle}: ${target.type || "Normale"}`}
+                  accessibilityHint="Tocca per cambiare tipo di serie"
+                  onPress={() => cycleSetType(setIndex)}
+                  className="h-11 w-11 items-center justify-center rounded-md border border-iron-line"
+                  style={{ backgroundColor: meta.background }}
+                >
+                  <Text className="text-center text-xl font-semibold" style={{ color: meta.text }}>
+                    {meta.label}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {trackingFields.map((field) => (
+                <View key={field.key} className="justify-center px-1" style={{ flex: 1 }}>
+                  <TableNumberInput
+                    accessibilityLabel={`${field.label} ${setTitle.toLowerCase()}`}
+                    keyboardType={field.key === "loadKg" || field.key === "distanceKm" ? "decimal-pad" : "numeric"}
+                    value={target[field.key]}
+                    onChangeText={(value) => updateSetTarget(setIndex, { [field.key]: value })}
+                  />
+                </View>
+              ))}
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+function TableHeaderCell({ children, width, flex }: { children: any; width?: number; flex?: number }) {
+  return (
+    <View
+      className="min-h-8 justify-center px-1"
+      style={{ width, flex }}
+    >
+      <Text className="text-center text-base font-semibold uppercase text-iron-muted">{children}</Text>
+    </View>
+  );
+}
+
+function TableNumberInput({ value, onChangeText, accessibilityLabel, keyboardType }) {
   return (
     <TextInput
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel}
+      keyboardType={keyboardType}
       value={String(value ?? "")}
       onChangeText={onChangeText}
-      keyboardType="numeric"
+      textAlign="center"
       placeholder="-"
       placeholderTextColor={colors.muted}
-      className="h-11 min-w-0 flex-1 rounded-md border border-iron-line bg-iron-card px-2 text-center text-base font-normal text-iron-text"
+      className="min-h-14 px-0 py-0 text-center text-xl font-semibold text-iron-text"
     />
   );
 }

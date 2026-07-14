@@ -1,0 +1,71 @@
+{"kind":"deck","id":"pr/521i62","name":"Deck"}
+{"kind":"layout","layoutId":"763c8235-69a1-4869-b5d0-983225dd5107","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"aadecaf4-3bde-42d5-bfb4-e0d268f190f4","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/iunkby","slide":1,"title":"IRONHABIT","textShapes":8}
+{"kind":"shape","id":"sh/6t8fq5wz","slide":1,"name":"accent-line","bbox":[48,46,76,8]}
+{"kind":"textbox","id":"sh/twjel0vq","slide":1,"name":"eyebrow","text":"IRONHABIT","textPreview":"IRONHABIT","textChars":9,"textLines":1,"bbox":[48,70,250,28]}
+{"kind":"textbox","id":"sh/svqxsfe5","slide":1,"name":"cover-title","text":"IronHabit","textPreview":"IronHabit","textChars":9,"textLines":1,"bbox":[48,150,560,90]}
+{"kind":"textbox","id":"sh/jqhwfqdo","slide":1,"name":"cover-subtitle","text":"Allenarsi, registrare, migliorare.\nIn un’unica app, anche offline.","textPreview":"Allenarsi, registrare, migliorare. | In un’unica app, anche offline.","textChars":66,"textLines":2,"bbox":[48,270,520,128]}
+{"kind":"textbox","id":"sh/ip8fmlw3","slide":1,"name":"cover-meta","text":"Workout tracker mobile • React Native + Expo","textPreview":"Workout tracker mobile • React Native + Expo","textChars":44,"textLines":1,"bbox":[48,580,520,36]}
+{"kind":"shape","id":"sh/5szeh0vu","slide":1,"name":"media-panel","bbox":[680,32,552,620]}
+{"kind":"shape","id":"sh/4rqxove9","slide":1,"name":"phone-shadow","bbox":[844,72,300,548]}
+{"kind":"textbox","id":"sh/w7a947ix","slide":1,"name":"cover-tag","text":"WORKOUT\nGUIDATO","textPreview":"WORKOUT | GUIDATO","textChars":15,"textLines":2,"bbox":[714,220,120,70]}
+{"kind":"textbox","id":"sh/x8jqdcji","slide":1,"name":"cover-detail","text":"Timer, serie e volume\nsempre sotto controllo.","textPreview":"Timer, serie e volume | sempre sotto controllo.","textChars":45,"textLines":2,"bbox":[714,316,128,100]}
+{"kind":"textbox","id":"sh/a5sr2x0r","slide":1,"name":"brand-1","text":"IRONHABIT","textPreview":"IRONHABIT","textChars":9,"textLines":1,"bbox":[48,672,180,20]}
+{"kind":"textbox","id":"sh/v618b21c","slide":1,"name":"page-1","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1190,672,42,20]}
+{"kind":"image","id":"im/6x0ba1cj","slide":1,"name":"","geometry":"roundRect","alt":"Schermata reale del workout guidato","bbox":[858,84,272,524]}
+{"kind":"image","id":"im/7y9c36d4","slide":1,"name":"","geometry":"roundRect","alt":"Logo IronHabit","bbox":[714,82,106,106]}
+{"kind":"notes","id":"nt/iunkby","slide":1,"text":""}
+{"kind":"slide","id":"sl/9imn07","slide":2,"title":"Dalla scheda alla serie, il flusso resta continuo","textShapes":12}
+{"kind":"textbox","id":"sh/6dsna1kb","slide":2,"name":"flow-title","text":"Dalla scheda alla serie, il flusso resta continuo","textPreview":"Dalla scheda alla serie, il flusso resta continuo","textChars":49,"textLines":1,"bbox":[48,38,1120,60]}
+{"kind":"textbox","id":"sh/tgj6lgjm","slide":2,"name":"step-1","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[76,124,50,28]}
+{"kind":"textbox","id":"sh/8fa5cb21","slide":2,"name":"label-1","text":"PIANIFICA","textPreview":"PIANIFICA","textChars":9,"textLines":1,"bbox":[128,124,210,28]}
+{"kind":"textbox","id":"sh/vi1onq1s","slide":2,"name":"step-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[460,124,50,28]}
+{"kind":"textbox","id":"sh/uhsnelk7","slide":2,"name":"label-2","text":"SCEGLI","textPreview":"SCEGLI","textChars":6,"textLines":1,"bbox":[512,124,210,28]}
+{"kind":"textbox","id":"sh/hk36pgjy","slide":2,"name":"step-3","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[844,124,50,28]}
+{"kind":"textbox","id":"sh/gja5gb2d","slide":2,"name":"label-3","text":"ALLENATI","textPreview":"ALLENATI","textChars":8,"textLines":1,"bbox":[896,124,210,28]}
+{"kind":"shape","id":"sh/3mlorq1o","slide":2,"name":"shot-frame-1","bbox":[76,164,300,442]}
+{"kind":"shape","id":"sh/ilcnilk3","slide":2,"name":"shot-frame-2","bbox":[460,164,300,442]}
+{"kind":"shape","id":"sh/k36dg7ix","slide":2,"name":"shot-frame-3","bbox":[844,164,300,442]}
+{"kind":"textbox","id":"sh/5ofu9czi","slide":2,"name":"cap-1","text":"Crea routine o avvia una sessione libera.","textPreview":"Crea routine o avvia una sessione libera.","textChars":41,"textLines":1,"bbox":[76,620,300,34]}
+{"kind":"textbox","id":"sh/i1oveh0r","slide":2,"name":"cap-2","text":"Trova l’esercizio giusto nel catalogo.","textPreview":"Trova l’esercizio giusto nel catalogo.","textChars":38,"textLines":1,"bbox":[460,620,300,34]}
+{"kind":"textbox","id":"sh/j2xc72hc","slide":2,"name":"cap-3","text":"Registra carico, ripetizioni e recupero.","textPreview":"Registra carico, ripetizioni e recupero.","textChars":40,"textLines":1,"bbox":[844,620,300,34]}
+{"kind":"textbox","id":"sh/7qxcbmho","slide":2,"name":"brand-2","text":"IRONHABIT","textPreview":"IRONHABIT","textChars":9,"textLines":1,"bbox":[48,672,180,20]}
+{"kind":"textbox","id":"sh/gvqdori5","slide":2,"name":"page-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1190,672,42,20]}
+{"kind":"image","id":"im/7qdw3m94","slide":2,"name":"","geometry":"roundRect","alt":"Schermata Schede","bbox":[88,176,276,418]}
+{"kind":"image","id":"im/6p4vuhsj","slide":2,"name":"","geometry":"roundRect","alt":"Schermata Esercizi","bbox":[472,176,276,418]}
+{"kind":"image","id":"im/tsve5cru","slide":2,"name":"","geometry":"roundRect","alt":"Schermata Workout","bbox":[856,176,276,418]}
+{"kind":"notes","id":"nt/9imn07","slide":2,"text":""}
+{"kind":"slide","id":"sl/kcr4ie","slide":3,"title":"Durante il workout contano solo i dati utili","textShapes":12}
+{"kind":"textbox","id":"sh/gbuhw3m1","slide":3,"name":"focus-title","text":"Durante il workout contano solo i dati utili","textPreview":"Durante il workout contano solo i dati utili","textChars":44,"textLines":1,"bbox":[48,38,1120,60]}
+{"kind":"shape","id":"sh/fal03ylg","slide":3,"name":"focus-media","bbox":[48,128,510,518]}
+{"kind":"textbox","id":"sh/e9czut4v","slide":3,"name":"focus-lead","text":"Un’interfaccia pensata per restare leggibile anche tra una serie e l’altra.","textPreview":"Un’interfaccia pensata per restare leggibile anche tra una serie e l’altra.","textChars":75,"textLines":1,"bbox":[626,138,550,90]}
+{"kind":"shape","id":"sh/t83i183a","slide":3,"name":"bar-1","bbox":[626,270,8,54]}
+{"kind":"textbox","id":"sh/s7uhs3mp","slide":3,"name":"feat-1-title","text":"Timer automatico","textPreview":"Timer automatico","textChars":16,"textLines":1,"bbox":[654,266,250,30]}
+{"kind":"textbox","id":"sh/rml0zylk","slide":3,"name":"feat-1-body","text":"Parte quando completi una serie.","textPreview":"Parte quando completi una serie.","textChars":32,"textLines":1,"bbox":[654,298,440,30]}
+{"kind":"shape","id":"sh/6lczqt4z","slide":3,"name":"bar-2","bbox":[626,352,8,54]}
+{"kind":"textbox","id":"sh/5kjixo3e","slide":3,"name":"feat-2-title","text":"Tracking adattivo","textPreview":"Tracking adattivo","textChars":17,"textLines":1,"bbox":[654,348,250,30]}
+{"kind":"textbox","id":"sh/4jahojmt","slide":3,"name":"feat-2-body","text":"Carico, ripetizioni, tempo o distanza.","textPreview":"Carico, ripetizioni, tempo o distanza.","textChars":38,"textLines":1,"bbox":[654,380,440,30]}
+{"kind":"shape","id":"sh/2dovuto3","slide":3,"name":"bar-3","bbox":[626,434,8,54]}
+{"kind":"textbox","id":"sh/nexw3ypo","slide":3,"name":"feat-3-title","text":"Progressione reale","textPreview":"Progressione reale","textChars":18,"textLines":1,"bbox":[654,430,250,30]}
+{"kind":"textbox","id":"sh/of6dw36t","slide":3,"name":"feat-3-body","text":"RPE, superset, warm-up e stima 1RM.","textPreview":"RPE, superset, warm-up e stima 1RM.","textChars":35,"textLines":1,"bbox":[654,462,440,30]}
+{"kind":"shape","id":"sh/pgfe587e","slide":3,"name":"bar-4","bbox":[626,516,8,54]}
+{"kind":"textbox","id":"sh/e94vq9or","slide":3,"name":"feat-4-title","text":"Sessione persistente","textPreview":"Sessione persistente","textChars":20,"textLines":1,"bbox":[654,512,270,30]}
+{"kind":"textbox","id":"sh/fadwzepc","slide":3,"name":"feat-4-body","text":"Puoi ridurla e riprenderla senza perdere dati.","textPreview":"Puoi ridurla e riprenderla senza perdere dati.","textChars":46,"textLines":1,"bbox":[654,544,470,48]}
+{"kind":"textbox","id":"sh/1cve1o7i","slide":3,"name":"brand-3","text":"IRONHABIT","textPreview":"IRONHABIT","textChars":9,"textLines":1,"bbox":[48,672,180,20]}
+{"kind":"textbox","id":"sh/qlkvm9ov","slide":3,"name":"page-3","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1190,672,42,20]}
+{"kind":"image","id":"im/bml8budg","slide":3,"name":"","geometry":"roundRect","alt":"Dettaglio del workout guidato","bbox":[64,144,478,486]}
+{"kind":"notes","id":"nt/kcr4ie","slide":3,"text":""}
+{"kind":"slide","id":"sl/xnj4k9","slide":4,"title":"IRONHABIT","textShapes":8}
+{"kind":"shape","id":"sh/yp8zet4z","slide":4,"name":"closing-accent","bbox":[48,46,76,8]}
+{"kind":"textbox","id":"sh/lszip83q","slide":4,"name":"closing-eyebrow","text":"IRONHABIT","textPreview":"IRONHABIT","textChars":9,"textLines":1,"bbox":[48,72,260,34]}
+{"kind":"textbox","id":"sh/0rqhg325","slide":4,"name":"closing-title","text":"Tutto resta sul dispositivo.\nTutto resta sotto controllo.","textPreview":"Tutto resta sul dispositivo. | Tutto resta sotto controllo.","textChars":57,"textLines":2,"bbox":[48,188,850,220]}
+{"kind":"textbox","id":"sh/bmh0jelo","slide":4,"name":"closing-1","text":"Offline-first","textPreview":"Offline-first","textChars":13,"textLines":1,"bbox":[52,512,220,32]}
+{"kind":"textbox","id":"sh/qlozat43","slide":4,"name":"closing-2","text":"Dati locali","textPreview":"Dati locali","textChars":11,"textLines":1,"bbox":[310,512,220,32]}
+{"kind":"textbox","id":"sh/dozilo3u","slide":4,"name":"closing-3","text":"Flusso completo","textPreview":"Flusso completo","textChars":15,"textLines":1,"bbox":[568,512,250,32]}
+{"kind":"textbox","id":"sh/cnqhcjm9","slide":4,"name":"closing-summary","text":"Pianificazione, esecuzione, storico e obiettivi in una sola app.","textPreview":"Pianificazione, esecuzione, storico e obiettivi in una sola app.","textChars":64,"textLines":1,"bbox":[48,574,820,54]}
+{"kind":"shape","id":"sh/3yx0felc","slide":4,"name":"logo-field","bbox":[950,170,250,250]}
+{"kind":"textbox","id":"sh/wbylg7ul","slide":4,"name":"brand-4","text":"IRONHABIT","textPreview":"IRONHABIT","textChars":9,"textLines":1,"bbox":[48,672,180,20]}
+{"kind":"textbox","id":"sh/xc7m9cb6","slide":4,"name":"page-4","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1190,672,42,20]}
+{"kind":"image","id":"im/bqtgfqdo","slide":4,"name":"","geometry":"roundRect","alt":"Logo IronHabit","bbox":[974,194,202,202]}
+{"kind":"notes","id":"nt/xnj4k9","slide":4,"text":""}

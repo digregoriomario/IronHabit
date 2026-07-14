@@ -1,6 +1,12 @@
 import { createPlan, createPlanExercise, nowIso } from "../domain/entities";
+import { PLAN_LEVELS } from "../domain/constants";
 import { ensure } from "./errors";
 import { validatePlanInput } from "./validators";
+
+const normalizePlanLevel = (level) => {
+  const normalized = level === "Starter" ? "Base" : level === "Intenso" ? "Avanzato" : level;
+  return PLAN_LEVELS.includes(normalized) ? normalized : "Intermedio";
+};
 
 export const normalizePlanExercises = (items) =>
   items.map((item, index) =>
@@ -30,11 +36,19 @@ export const updatePlan = (state, id, input) => {
 };
 
 export const deletePlan = (state, id) => {
-  const usedBySession = state.plannedSessions.some((session) => session.planId === id);
-  const usedByWorkout = state.workoutLogs.some((log) => log.planId === id);
-  ensure(!usedBySession, "Impossibile eliminare una scheda usata da sessioni pianificate.");
-  ensure(!usedByWorkout, "Impossibile eliminare una scheda presente nello storico allenamenti.");
-  return { ...state, plans: state.plans.filter((plan) => plan.id !== id) };
+  const usedByPlannedSession = state.plannedSessions.some((session) => session.planId === id && session.status === "planned");
+  ensure(!usedByPlannedSession, "Impossibile eliminare una scheda usata da sessioni ancora da svolgere.");
+  return {
+    ...state,
+    plans: state.plans.filter((plan) => plan.id !== id),
+    plannedSessions: state.plannedSessions.map((session) =>
+      session.planId === id ? { ...session, planId: null } : session
+    ),
+    workoutLogs: state.workoutLogs.map((log) =>
+      log.planId === id ? { ...log, planId: null } : log
+    ),
+    activeWorkout: state.activeWorkout?.planId === id ? { ...state.activeWorkout, planId: null } : state.activeWorkout
+  };
 };
 
 export const duplicateWorkoutAsPlan = (state, workoutId) => {
@@ -68,7 +82,7 @@ export const duplicateWorkoutAsPlan = (state, workoutId) => {
     name: `${originalPlan?.name || "Workout"} - copia`,
     description: "Scheda creata rapidamente da un allenamento dello storico.",
     goal: originalPlan?.goal || "Progressione",
-    level: originalPlan?.level || "Intermedio",
+    level: normalizePlanLevel(originalPlan?.level),
     expectedDuration: Number(workout.durationMinutes || 45),
     recommendedFrequency: originalPlan?.recommendedFrequency || "Libera",
     exercises,

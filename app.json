@@ -4,17 +4,23 @@
     "slug": "ironhabit",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon_black.png",
     "userInterfaceStyle": "dark",
     "scheme": "ironhabit",
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/icon_black.png",
+      "infoPlist": {
+        "UIViewControllerBasedStatusBarAppearance": true
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#000000"
+        "foregroundImage": "./assets/icon_black.png",
+        "backgroundColor": "#FFFFFF"
       }
     },
     "web": {

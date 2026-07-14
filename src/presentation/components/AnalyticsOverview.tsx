@@ -1,25 +1,16 @@
 import { Text, View } from "react-native";
-import Svg, { Circle, G, Line, Polyline, Rect, Text as SvgText } from "react-native-svg";
+import Svg, { G, Rect, Text as SvgText } from "react-native-svg";
 
 import { colors } from "../theme/colors";
 import { Card } from "./Card";
 
-export function AnalyticsOverview({ stats, oneRepMaxTrend = [], selectedExerciseName = "Esercizio", compact = false }) {
-  const exerciseTrend = oneRepMaxTrend.length ? oneRepMaxTrend : [{ value: 0, label: "-" }];
-
+export function AnalyticsOverview({ stats, compact = false }) {
   return (
     <View className="mt-3 gap-3">
       <Card>
-        <Text className="mb-3 text-base font-semibold leading-5 text-iron-text">Volume settimanale</Text>
+        <Text className="mb-3 text-base font-semibold leading-5 text-iron-text">Volume settimanale (kg)</Text>
         <BarChart data={stats.weeklyVolume} compact={compact} />
       </Card>
-
-      {compact ? null : (
-      <Card>
-        <Text className="mb-3 text-base font-semibold leading-5 text-iron-text">1RM stimato - {selectedExerciseName}</Text>
-        <TrendChart data={exerciseTrend} />
-      </Card>
-      )}
 
       {compact ? null : (
       <Card>
@@ -50,57 +41,32 @@ export function AnalyticsOverview({ stats, oneRepMaxTrend = [], selectedExercise
   );
 }
 
-function TrendChart({ data }) {
-  const width = 360;
-  const height = 170;
-  const padding = { top: 18, right: 18, bottom: 28, left: 34 };
-  const maxValue = Math.max(1, ...data.map((item) => Number(item.value || 0)));
-  const pointsFor = (rows) =>
-    rows.map((item, index) => ({
-      x: padding.left + (rows.length === 1 ? (width - padding.left - padding.right) / 2 : (index / (rows.length - 1)) * (width - padding.left - padding.right)),
-      y: padding.top + (height - padding.top - padding.bottom) * (1 - Number(item.value || 0) / maxValue),
-      label: item.label
-    }));
-  const primary = pointsFor(data);
-
-  return (
-    <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} accessibilityLabel="Andamento del massimale stimato">
-      {[0, 1, 2, 3].map((step) => {
-        const y = padding.top + (step / 3) * (height - padding.top - padding.bottom);
-        return <Line key={step} x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke={colors.line} strokeWidth="1" />;
-      })}
-      <Polyline points={primary.map((point) => `${point.x},${point.y}`).join(" ")} fill="none" stroke={colors.text} strokeWidth="3" />
-      {primary.map((point, index) => <Circle key={`load-${index}`} cx={point.x} cy={point.y} r="4" fill={colors.text} />)}
-      {primary.map((point, index) => (
-        <SvgText key={`label-${index}`} x={point.x} y={height - 8} fill={colors.muted} fontSize="10" textAnchor="middle">
-          {data.length > 6 && index !== 0 && index !== data.length - 1 ? "" : point.label}
-        </SvgText>
-      ))}
-    </Svg>
-  );
-}
-
 function BarChart({ data, compact = false }) {
   const width = 360;
-  const height = compact ? 126 : 160;
+  const height = compact ? 140 : 168;
   const maxValue = Math.max(1, ...data.map((item) => Number(item.value || 0)));
   const gap = 8;
   const barWidth = (width - 28 - gap * (data.length - 1)) / data.length;
-  const chartBottom = compact ? 94 : 122;
-  const maxBarHeight = compact ? 76 : 105;
-  const labelY = compact ? 116 : 146;
+  const chartBottom = compact ? 104 : 130;
+  const maxBarHeight = compact ? 72 : 94;
+  const labelY = compact ? 130 : 156;
 
   return (
     <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} accessibilityLabel="Grafico del volume settimanale">
       {data.map((item, index) => {
-        const barHeight = Math.max(3, (Number(item.value || 0) / maxValue) * maxBarHeight);
+        const value = Math.round(Number(item.value || 0));
+        const barHeight = Math.max(3, (value / maxValue) * maxBarHeight);
         const x = 14 + index * (barWidth + gap);
         const y = chartBottom - barHeight;
+        const fill = item.isToday ? colors.text : colors.muted;
         return (
           <G key={`${item.label}-${index}`}>
-            <Rect x={x} y={y} width={barWidth} height={barHeight} rx="5" fill={index === data.length - 1 ? colors.text : colors.muted} />
+            <SvgText x={x + barWidth / 2} y={Math.max(14, y - 7)} fill={colors.text} fontSize="10" fontWeight="700" textAnchor="middle">
+              {value}
+            </SvgText>
+            <Rect x={x} y={y} width={barWidth} height={barHeight} rx="5" fill={fill} />
             <SvgText x={x + barWidth / 2} y={labelY} fill={colors.muted} fontSize="9" textAnchor="middle">
-              {index % 2 === 0 || index === data.length - 1 ? item.label : ""}
+              {item.label}
             </SvgText>
           </G>
         );

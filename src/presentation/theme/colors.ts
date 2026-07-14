@@ -1,5 +1,5 @@
 export type ThemeScheme = "light" | "dark";
-export type ThemeMode = ThemeScheme | "system";
+export type ThemeMode = ThemeScheme;
 
 export const themePalettes: Record<ThemeScheme, Record<string, string>> = {
   light: {
@@ -77,6 +77,8 @@ export const colors = { ...themePalettes.light };
 export const applyThemeColors = (scheme: ThemeScheme) => {
   Object.assign(colors, themePalettes[scheme]);
 };
+
+export const normalizeThemeMode = (value?: string): ThemeMode => value === "light" ? "light" : "dark";
 
 const hexToRgb = (hex: string) => {
   const normalized = hex.replace("#", "");

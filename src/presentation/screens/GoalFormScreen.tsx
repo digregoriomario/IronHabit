@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Save } from "lucide-react-native";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 
@@ -11,9 +11,10 @@ import { PageHeader } from "../components/PageHeader";
 import { ScreenContainer } from "../components/ScreenContainer";
 import { maxLoadForExercise, maxRepsForExercise } from "../../usecases/goalProgressUseCase";
 import { colors } from "../theme/colors";
+import { FORM_SCREEN_EDGES, FORM_SCROLL_CONTENT_STYLE } from "../theme/layout";
 import { showValidationAlert } from "../utils/alerts";
 import { addWeeks, formatWeekRange, startOfLocalWeek, toLocalDateKey } from "../utils/date";
-import { goalCategoryOptions, labelForGoalCategory } from "../utils/labels";
+import { goalCategoryOptions } from "../utils/labels";
 import { useIronHabitStore } from "../store/useIronHabitStore";
 
 const blankGoal = {
@@ -122,12 +123,10 @@ export function GoalFormScreen({ navigation, route }) {
       showValidationAlert(error);
     }
   };
-  const saveTitle = `Salva obiettivo ${labelForGoalCategory(form.category).toLowerCase()}`;
-
   return (
-    <ScreenContainer>
+    <ScreenContainer edges={FORM_SCREEN_EDGES}>
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
+        <ScrollView contentContainerStyle={FORM_SCROLL_CONTENT_STYLE}>
           <PageHeader title={id ? "Modifica obiettivo" : "Nuovo obiettivo"} />
 
           <View className="gap-4">
@@ -157,14 +156,14 @@ export function GoalFormScreen({ navigation, route }) {
                   </View>
                 </View>
                 <AppInput
-                  label="Allenamenti da completare"
+                  label="Quanti giorni ti vuoi allenare questa settimana?"
                   keyboardType="numeric"
                   value={form.targetValue}
                   onChangeText={(value) => setField("targetValue", value)}
                   accessibilityHint="Minimo 1, massimo 7"
                 />
                 <Text className="text-xs font-medium leading-5 text-iron-muted">
-                  L'obiettivo viene raggiunto automaticamente contando i workout completati in quella settimana.
+                  L'obiettivo viene raggiunto automaticamente contando i giorni con almeno un workout completato in quella settimana.
                 </Text>
               </>
             ) : null}
@@ -172,12 +171,13 @@ export function GoalFormScreen({ navigation, route }) {
             {form.category === "load" ? (
               <>
                 <EntitySelect
-                  label="Esercizio obbligatorio"
+                  label="Esercizio"
                   items={exercises}
                   value={form.relatedExerciseId}
                   onChange={(value) => setField("relatedExerciseId", value)}
                   includeEmpty={false}
                   helperText={exercises.length ? undefined : "Crea prima un esercizio."}
+                  variant="dropdown"
                 />
                 <Text className="text-xs font-medium leading-5 text-iron-muted">
                   Record attuale: {currentLoadRecord} kg. Il nuovo target deve essere superiore.
@@ -194,12 +194,13 @@ export function GoalFormScreen({ navigation, route }) {
             {form.category === "reps" ? (
               <>
                 <EntitySelect
-                  label="Esercizio obbligatorio"
+                  label="Esercizio"
                   items={exercises}
                   value={form.relatedExerciseId}
                   onChange={(value) => setField("relatedExerciseId", value)}
                   includeEmpty={false}
                   helperText={exercises.length ? undefined : "Crea prima un esercizio."}
+                  variant="dropdown"
                 />
                 <Text className="text-xs font-medium leading-5 text-iron-muted">
                   Record attuale: {currentRepsRecord} ripetizioni. Il nuovo target deve essere superiore.
@@ -214,7 +215,7 @@ export function GoalFormScreen({ navigation, route }) {
             ) : null}
 
             <AppInput label="Note" value={form.notes} onChangeText={(value) => setField("notes", value)} multiline />
-            <AppButton title={saveTitle} icon={Save} variant="info" disabled={isSaveDisabled} onPress={save} />
+            <AppButton title="Imposta obiettivo" variant="info" disabled={isSaveDisabled} onPress={save} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

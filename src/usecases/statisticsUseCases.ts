@@ -111,17 +111,24 @@ export const buildStatistics = (state) => {
       };
     });
 
-  const weeklyVolume = Array.from({ length: 8 }).map((_, index) => {
-    const week = startOfWeek(now);
-    week.setDate(week.getDate() - (7 - index) * 7);
-    const nextWeek = new Date(week);
-    nextWeek.setDate(nextWeek.getDate() + 7);
+  const currentWeekStart = startOfWeek(now);
+  const todayKey = localDateKey(startOfDay(now));
+  const weeklyVolume = Array.from({ length: 7 }).map((_, index) => {
+    const day = new Date(currentWeekStart);
+    day.setDate(currentWeekStart.getDate() + index);
+    const nextDay = new Date(day);
+    nextDay.setDate(day.getDate() + 1);
     const value = state.workoutLogs
-      .filter((log) => new Date(log.date) >= week && new Date(log.date) < nextWeek)
+      .filter((log) => new Date(log.date) >= day && new Date(log.date) < nextDay)
       .reduce((total, log) => total + calculateWorkoutVolume(log), 0);
+    const dayLabel = new Intl.DateTimeFormat("it-IT", { weekday: "short" })
+      .format(day)
+      .replace(".", "")
+      .slice(0, 3);
     return {
       value: Math.round(value),
-      label: new Intl.DateTimeFormat("it-IT", { day: "2-digit", month: "2-digit" }).format(week)
+      label: dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1),
+      isToday: localDateKey(day) === todayKey
     };
   });
 

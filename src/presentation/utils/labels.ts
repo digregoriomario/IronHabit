@@ -57,7 +57,6 @@ export const yesNoOptions = [
 ];
 
 export const themeModeOptions = [
-  { value: "system", label: "Sistema" },
   { value: "light", label: "Chiaro" },
   { value: "dark", label: "Scuro" }
 ];

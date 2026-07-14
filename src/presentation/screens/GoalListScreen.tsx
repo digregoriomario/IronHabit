@@ -121,7 +121,7 @@ function GoalRow({ goal, navigation, achieved = false }) {
     <ListRow
       title={goal.title}
       subtitle={labelForGoalCategory(goal.category)}
-      meta={`${goal.currentValue} / ${goal.targetValue}`}
+      meta={formatGoalMeta(goal)}
       onPress={() => navigation.navigate("GoalDetail", { id: goal.id })}
       leading={(
         <View className={`h-10 w-10 items-center justify-center rounded-md ${iconColors.background}`}>
@@ -132,4 +132,10 @@ function GoalRow({ goal, navigation, achieved = false }) {
       <ProgressBar current={goal.currentValue} target={goal.targetValue} />
     </ListRow>
   );
+}
+
+function formatGoalMeta(goal) {
+  if (goal.category === "load") return `${goal.currentValue} / ${goal.targetValue} kg`;
+  if (goal.category === "reps") return `${goal.currentValue} / ${goal.targetValue} ripetizioni`;
+  return `${goal.currentValue} / ${goal.targetValue} giorni`;
 }

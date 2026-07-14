@@ -1,5 +1,6 @@
 import { createId } from "../domain/entities";
 import { createTrackingTarget } from "../domain/exerciseTracking";
+import { normalizeWarmupOrder } from "../domain/setRules";
 import type { ActiveWorkout, PlanExercise, WorkoutExercise, WorkoutPlan } from "../domain/types";
 import { ensure } from "./errors";
 
@@ -20,14 +21,14 @@ const normalizedTarget = (target, fallbackType = "Normale") => ({
 });
 
 const planTargets = (item: PlanExercise) =>
-  Array.isArray(item.setTargets) && item.setTargets.length
+  normalizeWarmupOrder(Array.isArray(item.setTargets) && item.setTargets.length
     ? item.setTargets.map((target) => normalizedTarget(target, item.type || "Normale"))
     : Array.from({ length: Math.max(1, Math.round(normalizedNumber(item.sets, 1))) }).map(() =>
         normalizedTarget(item, item.type || "Normale")
-      );
+      ));
 
 const workoutTargets = (item: WorkoutExercise) =>
-  item.sets.map((set) => normalizedTarget(set, set.type || "Normale"));
+  normalizeWarmupOrder(item.sets.map((set) => normalizedTarget(set, set.type || "Normale")));
 
 const planExerciseSignature = (item: PlanExercise, index: number) => ({
   exerciseId: item.exerciseId,
@@ -98,7 +99,7 @@ export const buildGuidedWorkoutDraft = ({ plan, session, exercises = [] }) => {
           exerciseId: item.exerciseId,
           supersetGroup: item.supersetGroup || "",
           restSeconds: normalizedRest(item.restSeconds),
-          sets: (
+          sets: normalizeWarmupOrder((
             Array.isArray(item.setTargets) && item.setTargets.length
               ? item.setTargets
               : Array.from({ length: Number(item.sets || 1) }).map(() => ({
@@ -117,7 +118,7 @@ export const buildGuidedWorkoutDraft = ({ plan, session, exercises = [] }) => {
               rpe: 0,
               completed: false
             };
-          }),
+          })),
           target: item
         };
       })

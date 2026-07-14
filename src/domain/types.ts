@@ -5,7 +5,9 @@ export type GoalCategory = "frequency" | "load" | "reps";
 export type SetType = "Normale" | "Riscaldamento" | "Drop set" | "Failure";
 export type ExerciseTrackingType =
   | "reps_weight"
-  | "reps"
+  | "bodyweight_reps"
+  | "weighted_bodyweight"
+  | "assisted_bodyweight"
   | "time"
   | "weight_time"
   | "time_distance"
@@ -132,7 +134,7 @@ export interface UserSettings {
   vibrationEnabled: boolean;
   defaultRestSeconds: number;
   profileName: string;
-  themeMode: "system" | "light" | "dark";
+  themeMode: "light" | "dark";
   onboardingCompleted: boolean;
 }
 

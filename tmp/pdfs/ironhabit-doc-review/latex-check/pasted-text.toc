@@ -1,0 +1,50 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {section}{\numberline {1}Executive summary}{2}{section.1}%
+\contentsline {section}{\numberline {2}Descrizione dell'app}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Obiettivo dell'applicazione}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Tipologia di utenti}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Problema affrontato}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Principali scenari d'uso}{3}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Requisiti}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Requisiti funzionali implementati}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Requisiti non funzionali}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Feature avanzate scelte}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Funzionalità considerate ma non implementate completamente}{7}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Limitazioni note}{7}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Progettazione dell'app}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Struttura generale}{8}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Architettura logica}{8}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Flusso di navigazione}{9}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Organizzazione dei dati}{9}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Design dell'app}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Obiettivo del design}{10}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Logo dell'app}{10}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Wireframe iniziali}{10}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Scelta dei colori e del tema}{13}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Scelta del font e organizzazione dei testi}{14}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Stile dell'interfaccia}{14}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Schermate finali dell'app}{15}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Passaggio dai wireframe all'app finale}{18}{subsection.5.8}%
+\contentsline {section}{\numberline {6}Scelte tecnologiche}{19}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Modalità di persistenza}{20}{subsection.6.1}%
+\contentsline {section}{\numberline {7}Implementazione}{20}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Organizzazione del codice}{21}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Componenti principali}{21}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Gestione dello stato e passaggio dei dati}{22}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Gestione della navigazione}{22}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Validazione e integrità}{22}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Allenamento guidato}{23}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Statistiche e indicatori}{24}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Ricerca, filtri e ordinamento}{24}{subsection.7.8}%
+\contentsline {subsection}{\numberline {7.9}Gestione dei dati persistenti}{24}{subsection.7.9}%
+\contentsline {subsection}{\numberline {7.10}Parti più significative e difficoltà incontrate}{25}{subsection.7.10}%
+\contentsline {section}{\numberline {8}Verifica del prototipo}{25}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Controlli eseguiti}{25}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Piano di collaudo manuale}{26}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Istruzioni per l'esecuzione}{26}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Prerequisiti}{26}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Installazione e avvio}{27}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Comandi aggiuntivi}{27}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Repository}{27}{subsection.9.4}%
+\contentsline {section}{\numberline {10}Conclusioni e sviluppi futuri}{28}{section.10}%

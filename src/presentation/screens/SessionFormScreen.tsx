@@ -7,6 +7,7 @@ import { AppInput } from "../components/AppInput";
 import { EntitySelect } from "../components/EntitySelect";
 import { PageHeader } from "../components/PageHeader";
 import { ScreenContainer } from "../components/ScreenContainer";
+import { FORM_SCREEN_EDGES, FORM_SCROLL_CONTENT_STYLE } from "../theme/layout";
 import { showValidationAlert } from "../utils/alerts";
 import { fromDateInput, toDateInput } from "../utils/date";
 import { useIronHabitStore } from "../store/useIronHabitStore";
@@ -82,9 +83,9 @@ export function SessionFormScreen({ navigation, route }) {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer edges={FORM_SCREEN_EDGES}>
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
+        <ScrollView contentContainerStyle={FORM_SCROLL_CONTENT_STYLE}>
           <PageHeader title={id ? `Modifica sessione del ${pageDate}` : `Nuova sessione per ${pageDate}`} />
 
           <View className="gap-4">

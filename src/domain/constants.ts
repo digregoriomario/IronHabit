@@ -5,7 +5,6 @@ export const MUSCLE_GROUPS = [
   "Spalle",
   "Braccia",
   "Core",
-  "Cardio",
   "Full body"
 ];
 
@@ -22,9 +21,54 @@ export const EQUIPMENT = [
   "Cardio"
 ];
 
-export const PLAN_LEVELS = ["Starter", "Intermedio", "Intenso"];
+export const PLAN_LEVELS = DIFFICULTIES;
 
 export const SET_TYPES = ["Normale", "Riscaldamento", "Drop set", "Failure"];
+
+export const EXERCISE_TRACKING_TYPES = [
+  {
+    value: "reps_weight",
+    label: "Weight & Reps",
+    description: "Esempio: Bench Press, Dumbbell Curls"
+  },
+  {
+    value: "bodyweight_reps",
+    label: "Bodyweight Reps",
+    description: "Esempio: Pullups, Sit ups, Burpees"
+  },
+  {
+    value: "weighted_bodyweight",
+    label: "Weighted Bodyweight",
+    description: "Esempio: Weighted Pull Ups, Weighted Dips"
+  },
+  {
+    value: "assisted_bodyweight",
+    label: "Assisted Bodyweight",
+    description: "Esempio: Assisted Pullups, Assisted Dips"
+  },
+  {
+    value: "time",
+    label: "Duration",
+    description: "Esempio: Planks, Yoga, Stretching"
+  },
+  {
+    value: "weight_time",
+    label: "Duration & Weight",
+    description: "Esempio: Weighted Plank, Wall Sit"
+  },
+  {
+    value: "time_distance",
+    label: "Distance & Duration",
+    description: "Esempio: Running, Cycling, Rowing"
+  },
+  {
+    value: "weight_distance",
+    label: "Weight & Distance",
+    description: "Esempio: Farmers Walk, Suitcase Carry"
+  }
+];
+
+export const EXERCISE_TRACKING_TYPE_VALUES = EXERCISE_TRACKING_TYPES.map((item) => item.value);
 
 export const SUPERSET_GROUPS = ["", "A", "B", "C", "D"];
 

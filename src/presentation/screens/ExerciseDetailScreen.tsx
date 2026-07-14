@@ -68,9 +68,7 @@ export function ExerciseDetailScreen({ navigation, route }) {
         <SectionHeader title="Record" />
         <Card className="gap-3">
           <Info label="Serie registrate" value={records.sets} />
-          <Info label="Carico massimo" value={`${records.bestLoad} kg`} />
           <Info label="Ripetizioni max" value={records.bestReps} />
-          <Info label="1RM stimato" value={`${records.bestOneRepMax} kg`} />
         </Card>
 
         <SectionHeader title="Note" />

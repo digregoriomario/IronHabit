@@ -1,6 +1,6 @@
 import { Check, Dumbbell, Search, X } from "lucide-react-native";
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Platform, Pressable, ScrollView, StatusBar, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MUSCLE_GROUPS } from "../../domain/constants";
@@ -23,6 +23,7 @@ export function PlanExercisePickerScreen({ navigation, route }) {
   const [query, setQuery] = useState("");
   const [muscle, setMuscle] = useState("Tutti");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const topInset = Math.max(insets.top, Platform.OS === "android" ? StatusBar.currentHeight ?? 0 : 0);
 
   const filtered = useMemo(
     () =>
@@ -56,7 +57,7 @@ export function PlanExercisePickerScreen({ navigation, route }) {
           supersetGroup: "",
           restSeconds: settings.defaultRestSeconds,
           notes: "",
-          sets: Array.from({ length: 3 }).map((_, index) => ({
+          sets: Array.from({ length: 1 }).map((_, index) => ({
             setNumber: index + 1,
             ...trackingTarget,
             restSeconds: settings.defaultRestSeconds,
@@ -77,9 +78,9 @@ export function PlanExercisePickerScreen({ navigation, route }) {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer edges={["right", "left"]}>
       <View className="flex-1 bg-iron-bg" style={{ minHeight: 0, overflow: "hidden" }}>
-        <View className="flex-row items-center gap-3 border-b border-iron-line px-4 pb-3">
+        <View className="flex-row items-center gap-3 border-b border-iron-line px-4 pb-3" style={{ paddingTop: topInset + 8 }}>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Annulla selezione esercizi"
@@ -190,7 +191,7 @@ export function PlanExercisePickerScreen({ navigation, route }) {
           </View>
         </ScrollView>
 
-        <View className="border-t border-iron-line bg-iron-bg px-4 pt-4" style={{ paddingBottom: 16 + insets.bottom }}>
+        <View className="border-t border-iron-line bg-iron-bg px-4 pt-4" style={{ paddingBottom: Math.max(16, insets.bottom + 16) }}>
           <AppButton
             title={selectedIds.length ? `Aggiungi ${selectedIds.length} ${selectedIds.length === 1 ? "esercizio" : "esercizi"}` : "Seleziona gli esercizi"}
             disabled={!selectedIds.length}

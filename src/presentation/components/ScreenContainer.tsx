@@ -27,6 +27,7 @@ export function ScreenContainer({ children, className = "", edges = DEFAULT_EDGE
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: "100%",
     maxWidth: 820,
     alignSelf: "center"

@@ -1,5 +1,17 @@
 export const matchesText = (value, query) => String(value ?? "").toLowerCase().includes(query.trim().toLowerCase());
 
+const planLevelOrder = {
+  Base: 1,
+  Intermedio: 2,
+  Avanzato: 3
+};
+
+const normalizePlanLevel = (level) => {
+  if (level === "Starter") return "Base";
+  if (level === "Intenso") return "Avanzato";
+  return level || "Base";
+};
+
 export const filterExercises = (exercises, { query = "", muscle = "Tutti", difficulty = "Tutti", equipment = "Tutti", sort = "name" }) => {
   const rows = exercises.filter((exercise) => {
     const textMatch = !query || matchesText(exercise.name, query) || matchesText(exercise.description, query);
@@ -19,12 +31,12 @@ export const filterPlans = (plans, { query = "", goal = "Tutti", level = "Tutti"
   const rows = plans.filter((plan) => {
     const textMatch = !query || matchesText(plan.name, query) || matchesText(plan.description, query) || matchesText(plan.goal, query);
     const goalMatch = goal === "Tutti" || plan.goal === goal;
-    const levelMatch = level === "Tutti" || plan.level === level;
+    const levelMatch = level === "Tutti" || normalizePlanLevel(plan.level) === level;
     return textMatch && goalMatch && levelMatch;
   });
   return rows.sort((a, b) => {
     if (sort === "duration") return Number(a.expectedDuration) - Number(b.expectedDuration);
-    if (sort === "level") return a.level.localeCompare(b.level);
+    if (sort === "level") return (planLevelOrder[normalizePlanLevel(a.level)] || 0) - (planLevelOrder[normalizePlanLevel(b.level)] || 0);
     return a.name.localeCompare(b.name);
   });
 };

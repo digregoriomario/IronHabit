@@ -18,7 +18,7 @@ const settings = {
   vibrationEnabled: true,
   defaultRestSeconds: 90,
   profileName: "",
-  themeMode: "system" as const,
+  themeMode: "dark" as const,
   onboardingCompleted: false
 };
 
@@ -130,7 +130,7 @@ export const useIronHabitStore = create<IronHabitStore>()(
             name: session.title,
             description: "Sessione libera pianificata",
             goal: "Allenamento",
-            level: "Starter",
+            level: "Base",
             expectedDuration: 40,
             recommendedFrequency: "",
             notes: session.notes || "",
@@ -140,7 +140,7 @@ export const useIronHabitStore = create<IronHabitStore>()(
               createPlanExercise({
                 id: createId("virtual"),
                 exerciseId,
-                sets: 3,
+                sets: 1,
                 reps: 10,
                 restSeconds: state.settings.defaultRestSeconds,
                 order: index + 1

@@ -6,7 +6,7 @@ import { Card } from "../components/Card";
 import { PageHeader } from "../components/PageHeader";
 import { RestTimerSelect } from "../components/RestTimerSelect";
 import { ScreenContainer } from "../components/ScreenContainer";
-import { colors } from "../theme/colors";
+import { colors, normalizeThemeMode } from "../theme/colors";
 import { themeModeOptions } from "../utils/labels";
 import { useIronHabitStore } from "../store/useIronHabitStore";
 
@@ -33,7 +33,7 @@ export function SettingsScreen() {
           <AppSelect
             label="Tema"
             options={themeModeOptions}
-            value={settings.themeMode || "system"}
+            value={normalizeThemeMode(settings.themeMode)}
             onChange={(themeMode) => updateSettings({ themeMode })}
           />
         </Card>

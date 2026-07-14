@@ -2,6 +2,7 @@ import { Alert, ScrollView, Text, View } from "react-native";
 import { Edit3, Play, Trash2 } from "lucide-react-native";
 
 import { createTrackingTarget, formatTrackingValue } from "../../domain/exerciseTracking";
+import { getSetTitle, normalizeWarmupOrder } from "../../domain/setRules";
 import { AppButton } from "../components/AppButton";
 import { Card } from "../components/Card";
 import { EmptyState } from "../components/EmptyState";
@@ -10,6 +11,12 @@ import { formatRestTime } from "../components/RestTimerSelect";
 import { ScreenContainer } from "../components/ScreenContainer";
 import { SectionHeader } from "../components/SectionHeader";
 import { useIronHabitStore } from "../store/useIronHabitStore";
+
+const normalizePlanLevel = (level) => {
+  if (level === "Starter") return "Base";
+  if (level === "Intenso") return "Avanzato";
+  return level || "Base";
+};
 
 export function PlanDetailScreen({ navigation, route }) {
   const id = route.params?.id;
@@ -67,7 +74,7 @@ export function PlanDetailScreen({ navigation, route }) {
         <Card className="gap-3">
           <Info label="Descrizione" value={plan.description || "Nessuna descrizione"} />
           <Info label="Obiettivo" value={plan.goal || "Allenamento generale"} />
-          <Info label="Livello" value={plan.level || "Starter"} />
+          <Info label="Livello" value={normalizePlanLevel(plan.level)} />
           <Info label="Durata prevista" value={`${plan.expectedDuration} min`} />
           <Info label="Frequenza" value={plan.recommendedFrequency || "Non indicata"} />
           <Info label="Note" value={plan.notes || "Nessuna nota"} />
@@ -80,7 +87,7 @@ export function PlanDetailScreen({ navigation, route }) {
             .sort((a, b) => a.order - b.order)
             .map((item, index) => {
               const exercise = exercises.find((entry) => entry.id === item.exerciseId);
-              const setTargets = (
+              const setTargets = normalizeWarmupOrder((
                 item.setTargets?.length
                   ? item.setTargets
                   : Array.from({ length: item.sets }).map(() => ({
@@ -90,14 +97,14 @@ export function PlanDetailScreen({ navigation, route }) {
                       durationSeconds: item.durationSeconds,
                       distanceKm: 0
                     }))
-              ).map((target) => createTrackingTarget(exercise, target));
+              ).map((target) => createTrackingTarget(exercise, target)));
               return (
                 <Card key={item.id} className="gap-2">
                   <Text className="text-lg font-semibold leading-6 text-iron-text">{index + 1}. {exercise?.name || "Esercizio rimosso"}</Text>
                   {item.supersetGroup ? <Text className="text-sm font-semibold text-iron-text">Superset {item.supersetGroup}</Text> : null}
                   {setTargets.map((target, setIndex) => (
                     <Text key={setIndex} className="text-sm font-medium leading-5 text-iron-muted">
-                      Serie {setIndex + 1}: {target.type || "Normale"} · {formatTrackingValue(exercise, target)}
+                      {getSetTitle(setTargets, setIndex)}: {target.type || "Normale"} · {formatTrackingValue(exercise, target)}
                     </Text>
                   ))}
                   <Text className="text-sm font-semibold text-iron-text">Recupero: {formatRestTime(item.restSeconds)}</Text>

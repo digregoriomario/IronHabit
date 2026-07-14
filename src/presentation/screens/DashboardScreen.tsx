@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Edit3, Play, Settings, Trash2 } from "lucide-react-native";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 
 import { statusLabels } from "../../domain/constants";
 import { buildStatistics } from "../../usecases/statisticsUseCases";
@@ -8,12 +8,16 @@ import { AnalyticsOverview } from "../components/AnalyticsOverview";
 import { Card } from "../components/Card";
 import { IconButton } from "../components/IconButton";
 import { MetricStrip } from "../components/MetricStrip";
-import { PageHeader } from "../components/PageHeader";
 import { ScreenContainer } from "../components/ScreenContainer";
 import { sessionStatusMeta } from "../components/SessionStatusBadge";
 import { useIronHabitStore } from "../store/useIronHabitStore";
-import { colors } from "../theme/colors";
+import { colors, normalizeThemeMode } from "../theme/colors";
 import { formatDate, formatShortDate, toDateInput } from "../utils/date";
+
+const appLogos = {
+  light: require("../../../assets/icon_black.png"),
+  dark: require("../../../assets/icon_white.png")
+};
 
 const startOfWeek = (weekOffset = 0) => {
   const today = new Date();
@@ -47,6 +51,8 @@ export function DashboardScreen({ navigation }) {
   const days = useMemo(() => agendaDays(weekOffset), [weekOffset]);
   const weekLabel = useMemo(() => `${formatShortDate(days[0])} - ${formatShortDate(days[6])}`, [days]);
   const todayKey = toDateInput(new Date());
+  const themeMode = normalizeThemeMode(settings.themeMode);
+  const logoSource = appLogos[themeMode];
   const stats = useMemo(
     () => buildStatistics({ exercises, plans, plannedSessions, workoutLogs, goals }),
     [exercises, goals, plans, plannedSessions, workoutLogs]
@@ -68,14 +74,28 @@ export function DashboardScreen({ navigation }) {
   return (
     <ScreenContainer>
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
-        <PageHeader
-          title={`Ciao ${settings.profileName || "atleta"}!`}
-          action={<IconButton icon={Settings} label="Apri impostazioni" onPress={() => navigation.navigate("Settings")} />}
-        />
+        <View className="mb-5 flex-row items-center gap-3">
+          <Image
+            source={logoSource}
+            accessibilityLabel="Logo IronHabit"
+            resizeMode="contain"
+            className="h-14 w-14 rounded-xl"
+          />
+          <Text className="min-w-0 flex-1 text-center text-2xl font-semibold leading-8 text-iron-text" numberOfLines={1}>
+            Ciao {settings.profileName || "atleta"}!
+          </Text>
+          <IconButton
+            icon={Settings}
+            label="Apri impostazioni"
+            className="h-14 w-14"
+            onPress={() => navigation.navigate("Settings")}
+          />
+        </View>
 
         <MetricStrip
           items={[
             { label: "Workout", value: stats.totals.completedWorkouts, onPress: () => navigation.navigate("HistoryTab") },
+            { label: "Schede", value: stats.totals.plans, onPress: () => navigation.navigate("PlansTab") },
             { label: "Obiettivi", value: stats.totals.activeGoals, onPress: () => navigation.navigate("GoalsTab") }
           ]}
         />

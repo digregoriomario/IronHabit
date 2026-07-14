@@ -150,7 +150,7 @@ export const buildBaseExercises = () => [
   baseExercise(
     "ex_base_bike",
     "Bike",
-    "Cardio",
+    "Gambe",
     "Cardio",
     "Pedala a intensita controllata o a intervalli, regolando resistenza e durata.",
     "20-30 min",

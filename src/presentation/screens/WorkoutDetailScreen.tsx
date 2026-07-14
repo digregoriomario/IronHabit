@@ -1,8 +1,7 @@
 import { Alert, ScrollView, Text, View } from "react-native";
-import { Copy, Edit3 } from "lucide-react-native";
+import { Copy } from "lucide-react-native";
 
 import { formatTrackingValue } from "../../domain/exerciseTracking";
-import { estimateOneRepMax } from "../../usecases/workoutAnalyticsUseCases";
 import { AppButton } from "../components/AppButton";
 import { Card } from "../components/Card";
 import { EmptyState } from "../components/EmptyState";
@@ -16,9 +15,7 @@ const logTotals = (log) => {
   const sets = log.exercises.flatMap((exercise) => exercise.sets).filter((set) => set.completed);
   return {
     sets: sets.length,
-    reps: sets.reduce((total, set) => total + Number(set.reps || 0), 0),
-    maxLoad: sets.reduce((max, set) => Math.max(max, Number(set.loadKg || 0)), 0),
-    bestOneRepMax: sets.reduce((max, set) => Math.max(max, estimateOneRepMax(set.loadKg, set.reps)), 0)
+    reps: sets.reduce((total, set) => total + Number(set.reps || 0), 0)
   };
 };
 
@@ -59,9 +56,8 @@ export function WorkoutDetailScreen({ navigation, route }) {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
         <PageHeader title={plan?.name || "Allenamento libero"} />
 
-        <View className="mt-5 flex-row gap-3">
-          <AppButton title="Modifica" icon={Edit3} className="flex-1" variant="secondary" onPress={() => navigation.navigate("WorkoutLogForm", { id })} />
-          <AppButton title="Crea scheda" icon={Copy} className="flex-1" variant="secondary" onPress={duplicate} />
+        <View className="mt-5">
+          <AppButton title="Crea scheda" icon={Copy} variant="secondary" onPress={duplicate} />
         </View>
 
         <SectionHeader title="Riepilogo" />
@@ -71,8 +67,6 @@ export function WorkoutDetailScreen({ navigation, route }) {
           <Info label="Fatica" value={`${log.fatigue}/10`} />
           <Info label="Serie completate" value={current.sets} />
           <Info label="Ripetizioni totali" value={current.reps} />
-          <Info label="Carico massimo" value={`${current.maxLoad} kg`} />
-          <Info label="1RM stimato" value={`${current.bestOneRepMax} kg`} />
           <Info label="Note" value={log.notes || "Nessuna nota"} />
         </Card>
 
@@ -83,7 +77,6 @@ export function WorkoutDetailScreen({ navigation, route }) {
               <Info label="Workout precedente" value={formatDate(previous.date)} />
               <Info label="Durata" value={`${Number(log.durationMinutes) - Number(previous.durationMinutes)} min rispetto al precedente`} />
               <Info label="Ripetizioni" value={`${current.reps - previousTotals.reps} ripetizioni`} />
-              <Info label="Carico max" value={`${current.maxLoad - previousTotals.maxLoad} kg`} />
             </>
           ) : (
             <Text className="text-sm font-medium leading-5 text-iron-muted">Non ci sono allenamenti precedenti sulla stessa scheda.</Text>
